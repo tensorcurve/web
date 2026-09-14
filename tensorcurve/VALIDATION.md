@@ -64,3 +64,10 @@ Before public launch, complete the real content and operator information, then v
 - OVHcloud was evaluated and excluded: its Savings Plan discounts apply to CPU instance families only, so no H100 term schedule exists; its on-demand H100 price is not tracked.
 - Per-provider validation: on-demand within sanity bounds, every term rate positive and below on-demand; a provider failure keeps its previous entry and never blocks the Verda refresh (exercised when the Together table selector first matched the wrong table).
 - Rendered through the stubbed WordPress harness and inspected at 640px and 390px.
+
+
+## Version 1.5.0 — GPU price tracker pages
+- New page template `page-tracker.php` (GPU chosen from the `_tc_gpu` page meta or the slug) renders, per GPU: a supplier table (on-demand, spot/preemptible, each published term, basis and notes), the commitment-curve chart (now parameterised by GPU) and a daily on-demand history chart built from `pricing-history.csv`, fetched from the feed's sibling URL with the same cache/fallback rules as the snapshot.
+- Setup creates three published pages (h100-pricing, h200-pricing, a100-pricing) with excerpts used as meta descriptions; Dataset JSON-LD with JSON/CSV distributions is emitted on tracker pages unless an SEO plugin is active.
+- Navigation: "H100 prices" in the default main menu, all three trackers in the footer, and a link from the homepage lab feature.
+- Rendered template parts through the stubbed harness for H100, H200 and A100; PHP syntax checks passed. Full page render verified after upload on the live site.

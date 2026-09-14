@@ -1,6 +1,6 @@
 <?php
 if (!defined('ABSPATH')) { exit; }
-define('TC_VERSION','1.4.0');
+define('TC_VERSION','1.5.0');
 function tc_setup(){
  load_theme_textdomain('tensorcurve',get_template_directory().'/languages');
  add_theme_support('title-tag');add_theme_support('post-thumbnails');add_theme_support('automatic-feed-links');
@@ -30,7 +30,7 @@ function tc_page_url($slug){
 function tc_guides_url(){ $id=absint(get_option('page_for_posts'));return $id?get_permalink($id):home_url('/'); }
 function tc_default_nav(){
  $links=array(__('Home','tensorcurve')=>home_url('/'),__('Guides','tensorcurve')=>tc_guides_url());
- foreach(array('pricing'=>'Pricing Lab','methodology'=>'Methodology','about'=>'About') as $slug=>$label){$url=tc_page_url($slug);if($url)$links[$label]=$url;}
+ foreach(array('pricing'=>'Pricing Lab','h100-pricing'=>'H100 prices','methodology'=>'Methodology','about'=>'About') as $slug=>$label){$url=tc_page_url($slug);if($url)$links[$label]=$url;}
  echo '<ul class="menu">';foreach($links as $label=>$url)echo '<li><a href="'.esc_url($url).'">'.esc_html($label).'</a></li>';echo '</ul>';
 }
 function tc_topics(){
@@ -68,6 +68,7 @@ function tc_seo(){
 function tc_description_words(){return 30;}
 add_action('wp_head','tc_seo',5);
 require get_template_directory().'/inc/pricing-data.php';
+require get_template_directory().'/inc/tracker.php';
 require get_template_directory().'/inc/customizer.php';
 require get_template_directory().'/inc/ads.php';
 require get_template_directory().'/inc/setup.php';

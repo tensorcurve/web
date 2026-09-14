@@ -2,7 +2,7 @@
 
 Source of the WordPress theme that powers [tensorcurve.com](https://www.tensorcurve.com/), an English editorial site about GPU rental economics.
 
-- **Theme**: `tensorcurve/` — classic WordPress theme, version 1.4.0
+- **Theme**: `tensorcurve/` — classic WordPress theme, version 1.5.0
 - **Requires**: WordPress 6.5+, PHP 8.0+ (validated on WordPress 7.1 / PHP 8.3)
 - **License**: GPL-2.0-or-later ([LICENSE.txt](tensorcurve/LICENSE.txt))
 
@@ -11,6 +11,7 @@ Source of the WordPress theme that powers [tensorcurve.com](https://www.tensorcu
 - Dynamic homepage with a featured article, category cards and guide listings
 - Article pages with author metadata, related posts and an auto-generated table of contents
 - **Pricing Lab**: a browser-side view of published GPU tariffs (H100 / H200 / A100 across 1, 3, 6 and 12 month terms), refreshed daily (see below)
+- **Price tracker pages** (`/h100-pricing/`, `/h200-pricing/`, `/a100-pricing/`): per-GPU supplier table, commitment curves and daily on-demand history, with Dataset structured data and JSON/CSV downloads
 - Data methodology page describing the source, check date and calculation rule
 - Optional AdSense slots, off by default; no consent platform, ads.txt or tracking code bundled
 - Optional setup screen (Appearance → TensorCurve Setup) that creates pages and imports four sample articles as drafts

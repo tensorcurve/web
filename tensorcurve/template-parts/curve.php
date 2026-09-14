@@ -1,15 +1,16 @@
 <?php if(!defined("ABSPATH"))exit;
-$data=tc_pricing_data();$months=array(1,3,6,12);$verda=array();foreach($months as $t){$v=tc_pricing_rate('H100',$t,$data);if($v!==null)$verda[$t]=$v;}
-if(count($verda)<4||empty($data['gpus']['H100']['base_usd']))return;
-$gpu=$data['gpus']['H100'];$checked=tc_pricing_date($data);$source=isset($data['source_url'])?$data['source_url']:'https://verda.com/pricing';
+$gpu_key=isset($args['gpu'])&&is_string($args['gpu'])?strtoupper($args['gpu']):'H100';
+$data=tc_pricing_data();$months=array(1,3,6,12);$verda=array();foreach($months as $t){$v=tc_pricing_rate($gpu_key,$t,$data);if($v!==null)$verda[$t]=$v;}
+if(count($verda)<4||empty($data['gpus'][$gpu_key]['base_usd']))return;
+$gpu=$data['gpus'][$gpu_key];$checked=tc_pricing_date($data);$source=isset($data['source_url'])?$data['source_url']:'https://verda.com/pricing';
 // Columns: on-demand, then commitment terms. Equal spacing by category (see methodology).
 $cols=array('0'=>'On-demand','1'=>'1 month','3'=>'3 months','6'=>'6 months','12'=>'12 months');
 $series=array();$points=array();$flat=array();$offscale=array();
 $series[]=array('key'=>'verda','name'=>'Verda','color'=>'#176858','width'=>3,'url'=>$source,'values'=>array('0'=>(float)$gpu['base_usd'])+array_combine(array_map('strval',array_keys($verda)),array_values($verda)),'note'=>'calculated from published base + discounts');
 $palette=array('together'=>'#a35d2a','hyperstack'=>'#3b5f8a','lambda'=>'#7a5c9e','azure'=>'#5f6f7a');
 foreach(array('together','hyperstack','lambda','azure') as $key){
- $p=tc_pricing_provider($key,$data);if(!$p||empty($p['gpus']['H100']['on_demand_usd']))continue;
- $h=$p['gpus']['H100'];$color=isset($palette[$key])?$palette[$key]:'#61766a';
+ $p=tc_pricing_provider($key,$data);if(!$p||empty($p['gpus'][$gpu_key]['on_demand_usd']))continue;
+ $h=$p['gpus'][$gpu_key];$color=isset($palette[$key])?$palette[$key]:'#61766a';
  if(!empty($p['tier'])&&$p['tier']==='hyperscaler'){$offscale[]=array('name'=>$p['name'],'model'=>$h['model'],'od'=>(float)$h['on_demand_usd'],'terms'=>(array)($h['term_rates']??array()),'url'=>$p['source_url']);continue;}
  $vals=array('0'=>(float)$h['on_demand_usd']);foreach((array)($h['term_rates']??array()) as $m=>$r){if(isset($cols[(string)$m]))$vals[(string)$m]=(float)$r;}
  if(count($vals)>1)$series[]=array('key'=>$key,'name'=>$p['name'],'color'=>$color,'width'=>2.5,'url'=>$p['source_url'],'values'=>$vals,'buckets'=>(array)($h['term_buckets']??array()),'note'=>'published reserved rates by duration bucket');
@@ -20,12 +21,12 @@ $all=array();foreach($series as $s)foreach($s['values'] as $v)$all[]=$v;foreach(
 $lo=floor((min($all)-0.05)*10)/10;$hi=ceil((max($all)+0.05)*10)/10;if($hi-$lo<0.4){$hi=$lo+0.4;}
 $w=500;$h_svg=300;$top=52;$bottom=$h_svg-58;$left=52;$right=470;$n=count($cols);$xs=array();$i=0;foreach(array_keys($cols) as $c){$xs[$c]=$left+16+$i*(($right-$left-32)/($n-1));$i++;}
 $y=function($v)use($lo,$hi,$top,$bottom){return $top+($hi-$v)/($hi-$lo)*($bottom-$top);};
-$label='H100 price per GPU-hour by commitment term. ';foreach($series as $s){$parts=array();foreach($s['values'] as $c=>$v)$parts[]=$cols[$c].' '.number_format($v,$c==='0'?2:4);$label.=$s['name'].': '.implode(', ',$parts).'. ';}
+$label=$gpu_key.' price per GPU-hour by commitment term. ';foreach($series as $s){$parts=array();foreach($s['values'] as $c=>$v)$parts[]=$cols[$c].' '.number_format($v,$c==='0'?2:4);$label.=$s['name'].': '.implode(', ',$parts).'. ';}
 foreach($points as $pt)$label.=$pt['name'].' on-demand '.number_format($pt['value'],2).', no term schedule published. ';
 foreach($flat as $f)$label.=$f['name'].' reserved from '.number_format($f['value'],2).', term not published. ';
 $label.=sprintf('Vertical axis runs from %s to %s dollars and does not start at zero.',number_format($lo,1),number_format($hi,1));
 $ticks=array($hi,$lo+($hi-$lo)*2/3,$lo+($hi-$lo)/3,$lo);
-?><figure class="editorial-chart"><div class="chart-kicker"><span>H100 COMMITMENT CURVES</span><span>USD / GPU-hour</span></div><svg viewBox="0 0 <?php echo (int)$w; ?> <?php echo (int)$h_svg; ?>" role="img" aria-label="<?php echo esc_attr($label); ?>"><?php
+?><figure class="editorial-chart"><div class="chart-kicker"><span><?php echo esc_html($gpu_key); ?> COMMITMENT CURVES</span><span>USD / GPU-hour</span></div><svg viewBox="0 0 <?php echo (int)$w; ?> <?php echo (int)$h_svg; ?>" role="img" aria-label="<?php echo esc_attr($label); ?>"><?php
 foreach($ticks as $tick){$py=round($y($tick),2);echo '<line x1="'.$left.'" y1="'.esc_attr($py).'" x2="'.$right.'" y2="'.esc_attr($py).'" stroke="#d7e2df"/><text x="'.($left-8).'" y="'.esc_attr($py+4).'" text-anchor="end">'.esc_html(number_format($tick,1)).'</text>';}
 echo '<line x1="'.esc_attr($xs['0']+(($xs['1']-$xs['0'])/2)).'" y1="'.$top.'" x2="'.esc_attr($xs['0']+(($xs['1']-$xs['0'])/2)).'" y2="'.$bottom.'" stroke="#c5d2cb" stroke-dasharray="3 4"/>';
 foreach($cols as $c=>$name)echo '<text x="'.esc_attr(round($xs[$c],2)).'" y="'.($h_svg-30).'" text-anchor="middle">'.esc_html($name).'</text>';
