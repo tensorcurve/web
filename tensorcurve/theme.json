@@ -1,0 +1,43 @@
+{
+  "version": 2,
+  "settings": {
+    "appearanceTools": true,
+    "layout": {
+      "contentSize": "760px",
+      "wideSize": "1180px"
+    },
+    "color": {
+      "palette": [
+        {
+          "slug": "forest",
+          "name": "Forest",
+          "color": "#176858"
+        },
+        {
+          "slug": "ink",
+          "name": "Ink",
+          "color": "#172b26"
+        },
+        {
+          "slug": "paper",
+          "name": "Paper",
+          "color": "#ffffff"
+        }
+      ]
+    },
+    "typography": {
+      "fontFamilies": [
+        {
+          "fontFamily": "Georgia, serif",
+          "slug": "editorial",
+          "name": "Editorial"
+        },
+        {
+          "fontFamily": "Arial, sans-serif",
+          "slug": "sans",
+          "name": "Sans"
+        }
+      ]
+    }
+  }
+}

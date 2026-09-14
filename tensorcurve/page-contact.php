@@ -1,0 +1,3 @@
+<?php
+/* Template Name: Contact & Corrections */
+get_header();while(have_posts()):the_post(); ?><main id="main" class="info-page"><div class="breadcrumbs"><a href="<?php echo esc_url(home_url('/')); ?>">Home</a></div><h1><?php the_title(); ?></h1><div class="prose"><?php the_content();if(!post_password_required()):$email=sanitize_email(get_theme_mod('tc_contact_email',''));if($email): ?><p><a href="<?php echo esc_url('mailto:'.$email); ?>"><?php echo esc_html($email); ?></a></p><?php else: ?><p>Editorial contact details will be published here.</p><?php endif;endif; ?></div></main><?php endwhile;get_footer(); ?>

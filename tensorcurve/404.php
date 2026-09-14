@@ -1,0 +1,1 @@
+<?php get_header(); ?><main id="main" class="info-page"><span class="category">404</span><h1>Page not found</h1><p>The address may have changed. Search the publication or return to the guides.</p><?php get_search_form(); ?><a class="read-link" href="<?php echo esc_url(tc_guides_url()); ?>">Browse all guides ↗</a></main><?php get_footer(); ?>

@@ -1,0 +1,1 @@
+(()=>{'use strict';document.querySelectorAll('.ad-placement ins.adsbygoogle').forEach(el=>{if(el.dataset.adsbygoogleStatus)return;try{(window.adsbygoogle=window.adsbygoogle||[]).push({});}catch(e){/* A blocker or consent manager may prevent ad delivery. */}});})();
