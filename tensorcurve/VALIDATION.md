@@ -45,3 +45,7 @@ Before public launch, complete the real content and operator information, then v
 - `template-parts/curve.php` regenerated from data reproduces the 1.1.0 SVG geometry for identical inputs (same axis range, point coordinates and labels).
 - PHP syntax checks passed for all theme files (PHP 8.4).
 - Not certified: GitHub Actions scheduling delays (cron runs can be late by minutes to an hour), Verda page redesigns (the job fails safe and keeps the previous snapshot), and host-level HTTP egress restrictions that would block the theme's feed fetch (the theme then shows the bundled snapshot).
+
+
+## Version 1.2.1 — mobile page margins
+- Fixed: on screens up to 760px wide, `.info-page` (About, Data methodology, Contact, 404 and other single pages) rendered flush to the screen edge because its `margin:auto` rule outranked the 20px side margins applied to `main`. The mobile rule now sets the same 20px side margins explicitly. Verified with a 390px headless Chromium render: home, About and Data methodology all show 20px side gutters and no horizontal overflow.
