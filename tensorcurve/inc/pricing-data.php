@@ -73,6 +73,12 @@ function tc_pricing_rate($gpu,$term,$data=null){
  $data=$data?:tc_pricing_data();
  return isset($data['gpus'][$gpu]['rates'][(string)$term])?(float)$data['gpus'][$gpu]['rates'][(string)$term]:null;
 }
+function tc_pricing_provider($key,$data=null){
+ $data=$data?:tc_pricing_data();
+ if(empty($data['providers'][$key])||!is_array($data['providers'][$key]))return null;
+ $p=$data['providers'][$key];if(empty($p['name'])||empty($p['gpus'])||!is_array($p['gpus']))return null;
+ return $p;
+}
 function tc_pricing_usd($value,$places=4){return '$'.number_format((float)$value,$places,'.',',');}
 function tc_pricing_refresh_note(){return tc_pricing_auto_enabled()?__('Refreshed daily from the public source','tensorcurve'):__('No automatic refresh','tensorcurve');}
 function tc_pricing_download_url($format='json'){return add_query_arg('tc_pricing',$format==='csv'?'csv':'json',home_url('/'));}

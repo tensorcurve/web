@@ -49,3 +49,10 @@ Before public launch, complete the real content and operator information, then v
 
 ## Version 1.2.1 — mobile page margins
 - Fixed: on screens up to 760px wide, `.info-page` (About, Data methodology, Contact, 404 and other single pages) rendered flush to the screen edge because its `margin:auto` rule outranked the 20px side margins applied to `main`. The mobile rule now sets the same 20px side margins explicitly. Verified with a 390px headless Chromium render: home, About and Data methodology all show 20px side gutters and no horizontal overflow.
+
+
+## Version 1.3.0 — comparison reference lines
+- The daily job now also reads Hyperstack (gpu-pricing page: per-GPU on-demand VM table and “starting from” reservation table) and Lambda (instances page: 8x/4x/2x/1x tables, 1x used as the 1-GPU comparison). Verified 2026-09-14: Hyperstack H100 SXM 3.20 on-demand / 2.72 reserved-from; Lambda 1x H100 SXM 4.29 (8x 3.99, 4x 4.09, 2x 4.19 recorded).
+- Neither publishes a commitment-term schedule, so no curve is derived; the homepage chart draws them as flat dashed/dotted reference lines with a legend and caption, and the axis range expands to include them.
+- A comparison-source failure never blocks the Verda refresh: that provider keeps its previous entry with a `stale:` status and the chart still renders it from the last good value.
+- Rendered with the stubbed WordPress harness and inspected at desktop and 390px widths.

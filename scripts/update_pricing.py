@@ -3,7 +3,9 @@
 
 Reads https://verda.com/pricing, extracts the single-GPU instance table
 (hardware, on-demand and spot prices) plus the self-service commitment
-discount schedule, and writes:
+discount schedule. Also reads the public on-demand H100 prices published by
+Hyperstack and Lambda as comparison points (neither publishes a term
+discount schedule, so no curve is derived for them). Writes:
 
   tensorcurve/assets/data/pricing-snapshot.json
   tensorcurve/assets/data/pricing-snapshot.csv
@@ -54,6 +56,14 @@ PRICE_MIN, PRICE_MAX = Decimal("0.10"), Decimal("50")
 MAX_DAILY_MOVE = Decimal("0.50")
 
 USER_AGENT = "TensorCurveBot/1.0 (+https://www.tensorcurve.com/; daily public tariff check)"
+
+# Comparison providers: on-demand (and, where published, "reserved from") prices only.
+HYPERSTACK_URL = "https://www.hyperstack.cloud/gpu-pricing"
+LAMBDA_URL = "https://lambda.ai/instances"
+COMPARISON_GPUS = {  # our key -> provider row label
+    "hyperstack": {"H100": "NVIDIA H100 SXM", "H200": "NVIDIA H200 SXM", "A100": "NVIDIA A100 SXM"},
+    "lambda": {"H100": "NVIDIA H100 SXM", "A100": "NVIDIA A100 SXM"},
+}
 
 
 def fetch(url: str) -> str:
@@ -179,6 +189,107 @@ def parse(page: str) -> dict:
     }
 
 
+def strip_tags(fragment: str) -> str:
+    return re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", " ", fragment))).strip()
+
+
+def parse_hyperstack(page: str) -> dict:
+    """Hyperstack publishes per-GPU on-demand VM prices and a 'starting from' reserved price."""
+    rows = []
+    for m in re.finditer(r'<div class="page-price_card_row_item df">(.*?)(?=<div class="page-price_card_row_item df">|<div class="page-price_card_row_item |</div>\s*</div>\s*</div>)', page, re.S):
+        cols = [strip_tags(c) for c in re.findall(r'<div class="page-price_card_row_item_col[^"]*">(.*?)</div>', m.group(1), re.S)]
+        if cols:
+            rows.append(cols)
+    on_demand = {r[0]: r for r in rows if len(r) >= 5 and r[4].startswith("$")}
+    reserved = {r[0]: r for r in rows if len(r) >= 2 and r[1].lstrip("\xa0 ").startswith("$") and (len(r) < 5 or not r[4].startswith("$"))}
+    gpus = {}
+    for key, label in COMPARISON_GPUS["hyperstack"].items():
+        if label not in on_demand:
+            raise RuntimeError(f"Hyperstack: {label} not found in on-demand table")
+        row = on_demand[label]
+        entry = {
+            "model": label.replace("NVIDIA ", ""),
+            "vram_gb": int(row[1]),
+            "max_cpus_per_gpu": int(row[2]),
+            "max_ram_gb_per_gpu": int(row[3]),
+            "on_demand_usd": fmt(money(row[4]), 2),
+            "reserved_from_usd": fmt(money(reserved[label][1]), 2) if label in reserved else None,
+            "reserved_term": "not published (starting-from price)",
+        }
+        gpus[key] = entry
+    return {
+        "name": "Hyperstack",
+        "source_url": HYPERSTACK_URL,
+        "unit": "USD per GPU-hour, on-demand VM, billed per minute",
+        "classification": "published_on_demand_and_reserved_from",
+        "term_schedule_published": False,
+        "gpus": gpus,
+    }
+
+
+def parse_lambda(page: str) -> dict:
+    """Lambda publishes per-GPU on-demand instance prices by instance size (8x, 4x, 2x, 1x tabs)."""
+    body = page[page.find("<body"):] if "<body" in page else page
+    tab_labels = re.findall(r'<button[^>]*role="tab"[^>]*>\s*([0-9]+x)\s*<', body)
+    tbls = tables(body)
+    price_tables = [t for t in tbls if t and t[0] and t[0][0].lower() == "plan" and any("PRICE" in h.upper() for h in t[0])]
+    if not price_tables:
+        raise RuntimeError("Lambda: instance price tables not found")
+    sizes = tab_labels[: len(price_tables)] if len(tab_labels) >= len(price_tables) else [f"{n}x" for n in (8, 4, 2, 1)][: len(price_tables)]
+    gpus = {}
+    for key, label in COMPARISON_GPUS["lambda"].items():
+        by_size = {}
+        specs = None
+        for size, t in zip(sizes, price_tables):
+            for r in t[1:]:
+                if r and r[0] == label and len(r) >= 6:
+                    by_size[size] = fmt(money(r[5]), 2)
+                    if size == "1x":
+                        specs = r
+        if "1x" not in by_size:
+            raise RuntimeError(f"Lambda: 1x {label} price not found; sizes seen {list(by_size)}")
+        gpus[key] = {
+            "model": label.replace("NVIDIA ", ""),
+            "vram_gb": gb(specs[1]) if specs else None,
+            "vcpus": int(specs[2]) if specs else None,
+            "on_demand_usd": by_size["1x"],
+            "on_demand_usd_by_instance_size": by_size,
+            "reserved_from_usd": None,
+            "reserved_term": "not published (contact sales)",
+        }
+    return {
+        "name": "Lambda",
+        "source_url": LAMBDA_URL,
+        "unit": "USD per GPU-hour, on-demand instance, price shown for a 1-GPU instance; larger instances listed separately",
+        "classification": "published_on_demand",
+        "term_schedule_published": False,
+        "gpus": gpus,
+    }
+
+
+def collect_comparisons(previous: dict | None, now: dt.datetime, saved: dict | None = None) -> dict:
+    """Fetch comparison providers independently; a failure keeps that provider's previous entry."""
+    out = {}
+    prev = (previous or {}).get("providers", {}) if previous else {}
+    for key, url, parser in (("hyperstack", HYPERSTACK_URL, parse_hyperstack), ("lambda", LAMBDA_URL, parse_lambda)):
+        try:
+            page = saved[key] if saved and key in saved else fetch(url)
+            entry = parser(page)
+            for g in entry["gpus"].values():
+                price = Decimal(g["on_demand_usd"])
+                if not (PRICE_MIN <= price <= PRICE_MAX):
+                    raise RuntimeError(f"{key}: on-demand {price} outside sanity bounds")
+            entry["checked_on"] = now.date().isoformat()
+            entry["status"] = "ok"
+            entry["source_sha256"] = hashlib.sha256(page.encode("utf-8")).hexdigest()
+            out[key] = entry
+        except Exception as exc:  # noqa: BLE001 - a comparison source must never block the main refresh
+            print(f"WARNING: {key} refresh failed: {exc}", file=sys.stderr)
+            if key in prev:
+                out[key] = dict(prev[key], status=f"stale: {type(exc).__name__}")
+    return out
+
+
 def fmt(value: Decimal, places: int) -> str:
     return str(value.quantize(Decimal(1).scaleb(-places), rounding=ROUND_HALF_UP))
 
@@ -202,7 +313,7 @@ def validate(new: dict, previous: dict | None) -> list[str]:
     return problems
 
 
-def build_snapshot(parsed: dict, page: str, now: dt.datetime, previous: dict | None) -> dict:
+def build_snapshot(parsed: dict, page: str, now: dt.datetime, previous: dict | None, providers: dict | None = None) -> dict:
     return {
         "schema_version": 2,
         "provider": "Verda",
@@ -225,11 +336,13 @@ def build_snapshot(parsed: dict, page: str, now: dt.datetime, previous: dict | N
             "Discount-derived rates are calculations, not separately published quotations.",
             "base_usd is the machine-readable offer price; base_usd_display is the rounded figure shown in the table.",
             "Refreshed automatically once a day from the public source page.",
+            "providers: comparison on-demand prices from other suppliers; they publish no term-discount schedule, so no term curve is derived for them.",
         ],
         "collected_at": now.isoformat(timespec="seconds"),
         "source_sha256": hashlib.sha256(page.encode("utf-8")).hexdigest(),
         "review_status": "automated extraction; validated against sanity bounds",
         "previous_checked_on": previous.get("checked_on") if previous else None,
+        "providers": providers or {},
     }
 
 
@@ -264,7 +377,15 @@ def append_history(snap: dict) -> None:
         for t in TERMS:
             existing.append([snap["checked_on"], "Verda", key, t, g["base_usd"], g.get("spot_usd", ""),
                              snap["discounts"][t], g["rates"][t]])
-    existing.sort(key=lambda r: (r[0], r[2], int(r[3])))
+    for pkey, prov in snap.get("providers", {}).items():
+        if not str(prov.get("status", "")).startswith("ok"):
+            continue
+        for gkey, g in prov["gpus"].items():
+            existing.append([snap["checked_on"], prov["name"], gkey, "on-demand", g["on_demand_usd"], "", "", g["on_demand_usd"]])
+            if g.get("reserved_from_usd"):
+                existing.append([snap["checked_on"], prov["name"], gkey, "reserved-from", g["on_demand_usd"], "", "", g["reserved_from_usd"]])
+    order = {"on-demand": 0, "reserved-from": 1}
+    existing.sort(key=lambda r: (r[0], r[1], r[2], order.get(r[3], 10 + int(r[3]) if r[3].isdigit() else 99)))
     with HISTORY_PATH.open("w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
         w.writerow(header)
@@ -275,6 +396,8 @@ def main(argv: list[str]) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--check", action="store_true", help="validate and print, do not write")
     ap.add_argument("--html", type=Path, help="parse a saved HTML file instead of fetching")
+    ap.add_argument("--hyperstack-html", type=Path, help="parse a saved Hyperstack page instead of fetching")
+    ap.add_argument("--lambda-html", type=Path, help="parse a saved Lambda page instead of fetching")
     args = ap.parse_args(argv)
 
     page = args.html.read_text(encoding="utf-8") if args.html else fetch(SOURCE_URL)
@@ -288,7 +411,12 @@ def main(argv: list[str]) -> int:
         return 2
 
     now = dt.datetime.now(dt.timezone.utc)
-    snap = build_snapshot(parsed, page, now, previous)
+    saved = {k: pth.read_text(encoding="utf-8") for k, pth in (("hyperstack", args.hyperstack_html), ("lambda", args.lambda_html)) if pth}
+    providers = collect_comparisons(previous, now, saved)
+    snap = build_snapshot(parsed, page, now, previous, providers)
+    for key, prov in providers.items():
+        g = prov["gpus"].get("H100", {})
+        print(f"{prov['name']}: H100 on-demand {g.get('on_demand_usd')} reserved-from {g.get('reserved_from_usd')} [{prov.get('status')}]")
     for key, g in snap["gpus"].items():
         print(f"{key}: base {g['base_usd']} (shown {g['base_usd_display']}), spot {g['spot_usd']}, "
               f"rates {', '.join(t + 'm=' + g['rates'][t] for t in TERMS)}")

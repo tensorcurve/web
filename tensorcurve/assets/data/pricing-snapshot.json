@@ -79,10 +79,90 @@
     "No region or guaranteed start date attached to these extracted rates.",
     "Discount-derived rates are calculations, not separately published quotations.",
     "base_usd is the machine-readable offer price; base_usd_display is the rounded figure shown in the table.",
-    "Refreshed automatically once a day from the public source page."
+    "Refreshed automatically once a day from the public source page.",
+    "providers: comparison on-demand prices from other suppliers; they publish no term-discount schedule, so no term curve is derived for them."
   ],
-  "collected_at": "2026-09-14T14:49:46+00:00",
+  "collected_at": "2026-09-14T15:29:06+00:00",
   "source_sha256": "719175ad7adea85a3603e77b7afabc2c25aef5e02895f212209b93ed1df27f85",
   "review_status": "automated extraction; validated against sanity bounds",
-  "previous_checked_on": "2026-09-14"
+  "previous_checked_on": "2026-09-14",
+  "providers": {
+    "hyperstack": {
+      "name": "Hyperstack",
+      "source_url": "https://www.hyperstack.cloud/gpu-pricing",
+      "unit": "USD per GPU-hour, on-demand VM, billed per minute",
+      "classification": "published_on_demand_and_reserved_from",
+      "term_schedule_published": false,
+      "gpus": {
+        "H100": {
+          "model": "H100 SXM",
+          "vram_gb": 80,
+          "max_cpus_per_gpu": 24,
+          "max_ram_gb_per_gpu": 240,
+          "on_demand_usd": "3.20",
+          "reserved_from_usd": "2.72",
+          "reserved_term": "not published (starting-from price)"
+        },
+        "H200": {
+          "model": "H200 SXM",
+          "vram_gb": 141,
+          "max_cpus_per_gpu": 22,
+          "max_ram_gb_per_gpu": 225,
+          "on_demand_usd": "3.99",
+          "reserved_from_usd": "2.79",
+          "reserved_term": "not published (starting-from price)"
+        },
+        "A100": {
+          "model": "A100 SXM",
+          "vram_gb": 80,
+          "max_cpus_per_gpu": 24,
+          "max_ram_gb_per_gpu": 120,
+          "on_demand_usd": "1.60",
+          "reserved_from_usd": "1.36",
+          "reserved_term": "not published (starting-from price)"
+        }
+      },
+      "checked_on": "2026-09-14",
+      "status": "ok",
+      "source_sha256": "ed806e0d003a62671f1f6a15ef8f4db268efd34cf922d95e3e88ec36311577bc"
+    },
+    "lambda": {
+      "name": "Lambda",
+      "source_url": "https://lambda.ai/instances",
+      "unit": "USD per GPU-hour, on-demand instance, price shown for a 1-GPU instance; larger instances listed separately",
+      "classification": "published_on_demand",
+      "term_schedule_published": false,
+      "gpus": {
+        "H100": {
+          "model": "H100 SXM",
+          "vram_gb": 80,
+          "vcpus": 26,
+          "on_demand_usd": "4.29",
+          "on_demand_usd_by_instance_size": {
+            "8x": "3.99",
+            "4x": "4.09",
+            "2x": "4.19",
+            "1x": "4.29"
+          },
+          "reserved_from_usd": null,
+          "reserved_term": "not published (contact sales)"
+        },
+        "A100": {
+          "model": "A100 SXM",
+          "vram_gb": 40,
+          "vcpus": 30,
+          "on_demand_usd": "1.99",
+          "on_demand_usd_by_instance_size": {
+            "8x": "1.99",
+            "1x": "1.99"
+          },
+          "reserved_from_usd": null,
+          "reserved_term": "not published (contact sales)"
+        }
+      },
+      "checked_on": "2026-09-14",
+      "status": "ok",
+      "source_sha256": "da05e481c34f89c544d375bdeca549edefd5aaa7d083a2c55c1a2439b6682a59"
+    }
+  }
 }
