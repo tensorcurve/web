@@ -82,7 +82,7 @@
     "Refreshed automatically once a day from the public source page.",
     "providers: comparison on-demand prices from other suppliers; they publish no term-discount schedule, so no term curve is derived for them."
   ],
-  "collected_at": "2026-09-14T15:36:42+00:00",
+  "collected_at": "2026-09-14T15:38:49+00:00",
   "source_sha256": "719175ad7adea85a3603e77b7afabc2c25aef5e02895f212209b93ed1df27f85",
   "review_status": "automated extraction; validated against sanity bounds",
   "previous_checked_on": "2026-09-14",
