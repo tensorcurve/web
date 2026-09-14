@@ -81,8 +81,8 @@
     "base_usd is the machine-readable offer price; base_usd_display is the rounded figure shown in the table.",
     "Refreshed automatically once a day from the public source page."
   ],
-  "collected_at": "2026-09-14T14:47:56+00:00",
+  "collected_at": "2026-09-14T14:49:46+00:00",
   "source_sha256": "719175ad7adea85a3603e77b7afabc2c25aef5e02895f212209b93ed1df27f85",
   "review_status": "automated extraction; validated against sanity bounds",
-  "previous_checked_on": "2026-09-13"
+  "previous_checked_on": "2026-09-14"
 }
