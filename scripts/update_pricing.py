@@ -60,6 +60,13 @@ USER_AGENT = "TensorCurveBot/1.0 (+https://www.tensorcurve.com/; daily public ta
 # Comparison providers: on-demand (and, where published, "reserved from") prices only.
 HYPERSTACK_URL = "https://www.hyperstack.cloud/gpu-pricing"
 LAMBDA_URL = "https://lambda.ai/instances"
+TOGETHER_URL = "https://www.together.ai/pricing"
+AZURE_SKU = "Standard_ND96isr_H100_v5"
+AZURE_REGION = "eastus"
+AZURE_URL = ("https://prices.azure.com/api/retail/prices?$filter=armSkuName%20eq%20%27" + AZURE_SKU
+             + "%27%20and%20armRegionName%20eq%20%27" + AZURE_REGION + "%27&currencyCode=USD")
+AZURE_GPUS_PER_VM = 8
+HOURS_PER_YEAR = 8760
 COMPARISON_GPUS = {  # our key -> provider row label
     "hyperstack": {"H100": "NVIDIA H100 SXM", "H200": "NVIDIA H200 SXM", "A100": "NVIDIA A100 SXM"},
     "lambda": {"H100": "NVIDIA H100 SXM", "A100": "NVIDIA A100 SXM"},
@@ -67,7 +74,7 @@ COMPARISON_GPUS = {  # our key -> provider row label
 
 
 def fetch(url: str) -> str:
-    req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT, "Accept": "text/html"})
+    req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT, "Accept": "text/html, application/json"})
     with urllib.request.urlopen(req, timeout=60) as resp:
         if resp.status != 200:
             raise RuntimeError(f"HTTP {resp.status} from {url}")
@@ -215,6 +222,7 @@ def parse_hyperstack(page: str) -> dict:
             "on_demand_usd": fmt(money(row[4]), 2),
             "reserved_from_usd": fmt(money(reserved[label][1]), 2) if label in reserved else None,
             "reserved_term": "not published (starting-from price)",
+            "term_rates": {},
         }
         gpus[key] = entry
     return {
@@ -254,6 +262,7 @@ def parse_lambda(page: str) -> dict:
             "vcpus": int(specs[2]) if specs else None,
             "on_demand_usd": by_size["1x"],
             "on_demand_usd_by_instance_size": by_size,
+            "term_rates": {},
             "reserved_from_usd": None,
             "reserved_term": "not published (contact sales)",
         }
@@ -267,18 +276,120 @@ def parse_lambda(page: str) -> dict:
     }
 
 
+def parse_together(page: str) -> dict:
+    """Together AI publishes per-GPU on-demand and reserved prices by contract duration bucket."""
+    body = page[page.find("<body"):] if "<body" in page else page
+    rows, buckets, head = [], [], []
+    for m in re.finditer(r'<table[^>]*class="[^"]*pricing_table is-gpu[^"]*"[^>]*>(.*?)</table>', body, re.S):
+        rows = [cells(r.group(1)) for r in re.finditer(r"<tr[^>]*>(.*?)</tr>", m.group(1), re.S)]
+        head = [c for r in rows[:2] for c in r]
+        buckets = [h for h in head if re.match(r"[0-9]+(-[0-9]+)?\+?\s*days", h)]
+        if len(buckets) >= 3:
+            break
+    if len(buckets) < 3:
+        raise RuntimeError(f"Together: reserved-duration table not found; last header {head}")
+    bucket_to_months = {}
+    for b in buckets:
+        hi = re.match(r"([0-9]+)-([0-9]+)\s*days", b)
+        if hi:
+            bucket_to_months[b] = str(round(int(hi.group(2)) / 30))
+    gpus = {}
+    for key, label in (("H100", "NVIDIA HGX H100"), ("H200", "NVIDIA HGX H200")):
+        row = next((r for r in rows if r and re.sub(r"\s+", " ", r[0]) == label and len(r) >= 3 + len(buckets)), None)
+        if row is None:
+            raise RuntimeError(f"Together: {label} row not found")
+        vals = row[1:]
+        term_rates, term_buckets = {}, {}
+        for b, v in zip(buckets, vals[2:]):
+            months = bucket_to_months.get(b)
+            if months and v.startswith("$"):
+                term_rates[months] = fmt(money(v), 2)
+                term_buckets[months] = b
+        gpus[key] = {
+            "model": label.replace("NVIDIA ", ""),
+            "preemptible_usd": fmt(money(vals[0]), 2) if vals[0].startswith("$") else None,
+            "on_demand_usd": fmt(money(vals[1]), 2),
+            "term_rates": term_rates,
+            "term_buckets": term_buckets,
+            "reserved_from_usd": None,
+            "reserved_term": "duration buckets as published; longer terms on request",
+        }
+    return {
+        "name": "Together AI",
+        "source_url": TOGETHER_URL,
+        "unit": "USD per GPU-hour, HGX H100 (8-GPU node pricing quoted per GPU)",
+        "classification": "published_reserved_by_duration",
+        "term_schedule_published": True,
+        "tier": "self-service",
+        "gpus": gpus,
+    }
+
+
+def parse_azure(raw: str) -> dict:
+    """Azure retail prices API: pay-as-you-go and reservation totals for the ND H100 v5 VM, normalised per GPU-hour."""
+    items = json.loads(raw).get("Items", [])
+    linux = [i for i in items if "Win" not in i.get("productName", "") and i.get("type") in ("Consumption", "Reservation")]
+    payg = next((i for i in linux if i["type"] == "Consumption" and i["meterName"] == "ND96isrH100v5"), None)
+    spot = next((i for i in linux if i["type"] == "Consumption" and i["meterName"].endswith("Spot")), None)
+    if payg is None:
+        raise RuntimeError("Azure: pay-as-you-go meter not found")
+    per_gpu = lambda vm_hourly: Decimal(str(vm_hourly)) / AZURE_GPUS_PER_VM  # noqa: E731
+    term_rates = {}
+    for i in linux:
+        if i["type"] != "Reservation":
+            continue
+        years = re.match(r"([0-9]+)\s*Year", i.get("reservationTerm", ""))
+        if not years:
+            continue
+        yrs = int(years.group(1))
+        hourly_vm = Decimal(str(i["retailPrice"])) / (HOURS_PER_YEAR * yrs)
+        term_rates[str(12 * yrs)] = fmt(per_gpu(hourly_vm), 4)
+    if "12" not in term_rates:
+        raise RuntimeError("Azure: 1-year reservation not found")
+    return {
+        "name": "Microsoft Azure",
+        "source_url": "https://azure.microsoft.com/en-us/pricing/details/virtual-machines/linux/",
+        "api_url": AZURE_URL,
+        "unit": f"USD per GPU-hour, {AZURE_SKU} ({AZURE_GPUS_PER_VM}x H100) in {AZURE_REGION}, Linux; VM price divided by {AZURE_GPUS_PER_VM}; reservation total divided by term hours",
+        "classification": "published_reserved_by_term_hyperscaler",
+        "term_schedule_published": True,
+        "tier": "hyperscaler",
+        "gpus": {"H100": {
+            "model": "ND96isr H100 v5 (8x H100 SXM)",
+            "gpu_count": AZURE_GPUS_PER_VM,
+            "on_demand_usd": fmt(per_gpu(payg["retailPrice"]), 4),
+            "spot_usd": fmt(per_gpu(spot["retailPrice"]), 4) if spot else None,
+            "term_rates": dict(sorted(term_rates.items(), key=lambda kv: int(kv[0]))),
+            "reserved_from_usd": None,
+            "reserved_term": "1, 3 and 5 year reservations as published",
+        }},
+    }
+
+
+PROVIDERS = (
+    ("hyperstack", HYPERSTACK_URL, parse_hyperstack),
+    ("lambda", LAMBDA_URL, parse_lambda),
+    ("together", TOGETHER_URL, parse_together),
+    ("azure", AZURE_URL, parse_azure),
+)
+
+
 def collect_comparisons(previous: dict | None, now: dt.datetime, saved: dict | None = None) -> dict:
     """Fetch comparison providers independently; a failure keeps that provider's previous entry."""
     out = {}
     prev = (previous or {}).get("providers", {}) if previous else {}
-    for key, url, parser in (("hyperstack", HYPERSTACK_URL, parse_hyperstack), ("lambda", LAMBDA_URL, parse_lambda)):
+    for key, url, parser in PROVIDERS:
         try:
             page = saved[key] if saved and key in saved else fetch(url)
             entry = parser(page)
+            entry.setdefault("tier", "self-service")
             for g in entry["gpus"].values():
                 price = Decimal(g["on_demand_usd"])
                 if not (PRICE_MIN <= price <= PRICE_MAX):
                     raise RuntimeError(f"{key}: on-demand {price} outside sanity bounds")
+                rates = [Decimal(v) for v in (g.get("term_rates") or {}).values()]
+                if any(r <= 0 or r >= price for r in rates):
+                    raise RuntimeError(f"{key}: term rates must be positive and below on-demand: {rates}")
             entry["checked_on"] = now.date().isoformat()
             entry["status"] = "ok"
             entry["source_sha256"] = hashlib.sha256(page.encode("utf-8")).hexdigest()
@@ -384,6 +495,8 @@ def append_history(snap: dict) -> None:
             existing.append([snap["checked_on"], prov["name"], gkey, "on-demand", g["on_demand_usd"], "", "", g["on_demand_usd"]])
             if g.get("reserved_from_usd"):
                 existing.append([snap["checked_on"], prov["name"], gkey, "reserved-from", g["on_demand_usd"], "", "", g["reserved_from_usd"]])
+            for months, rate in (g.get("term_rates") or {}).items():
+                existing.append([snap["checked_on"], prov["name"], gkey, months, g["on_demand_usd"], g.get("spot_usd") or "", "", rate])
     order = {"on-demand": 0, "reserved-from": 1}
     existing.sort(key=lambda r: (r[0], r[1], r[2], order.get(r[3], 10 + int(r[3]) if r[3].isdigit() else 99)))
     with HISTORY_PATH.open("w", newline="", encoding="utf-8") as f:
@@ -398,6 +511,8 @@ def main(argv: list[str]) -> int:
     ap.add_argument("--html", type=Path, help="parse a saved HTML file instead of fetching")
     ap.add_argument("--hyperstack-html", type=Path, help="parse a saved Hyperstack page instead of fetching")
     ap.add_argument("--lambda-html", type=Path, help="parse a saved Lambda page instead of fetching")
+    ap.add_argument("--together-html", type=Path, help="parse a saved Together page instead of fetching")
+    ap.add_argument("--azure-json", type=Path, help="parse a saved Azure API response instead of fetching")
     args = ap.parse_args(argv)
 
     page = args.html.read_text(encoding="utf-8") if args.html else fetch(SOURCE_URL)
@@ -411,12 +526,12 @@ def main(argv: list[str]) -> int:
         return 2
 
     now = dt.datetime.now(dt.timezone.utc)
-    saved = {k: pth.read_text(encoding="utf-8") for k, pth in (("hyperstack", args.hyperstack_html), ("lambda", args.lambda_html)) if pth}
+    saved = {k: pth.read_text(encoding="utf-8") for k, pth in (("hyperstack", args.hyperstack_html), ("lambda", args.lambda_html), ("together", args.together_html), ("azure", args.azure_json)) if pth}
     providers = collect_comparisons(previous, now, saved)
     snap = build_snapshot(parsed, page, now, previous, providers)
     for key, prov in providers.items():
         g = prov["gpus"].get("H100", {})
-        print(f"{prov['name']}: H100 on-demand {g.get('on_demand_usd')} reserved-from {g.get('reserved_from_usd')} [{prov.get('status')}]")
+        print(f"{prov['name']}: H100 on-demand {g.get('on_demand_usd')} reserved-from {g.get('reserved_from_usd')} terms {g.get('term_rates')} [{prov.get('status')}]")
     for key, g in snap["gpus"].items():
         print(f"{key}: base {g['base_usd']} (shown {g['base_usd_display']}), spot {g['spot_usd']}, "
               f"rates {', '.join(t + 'm=' + g['rates'][t] for t in TERMS)}")

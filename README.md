@@ -2,7 +2,7 @@
 
 Source of the WordPress theme that powers [tensorcurve.com](https://www.tensorcurve.com/), an English editorial site about GPU rental economics.
 
-- **Theme**: `tensorcurve/` — classic WordPress theme, version 1.3.0
+- **Theme**: `tensorcurve/` — classic WordPress theme, version 1.4.0
 - **Requires**: WordPress 6.5+, PHP 8.0+ (validated on WordPress 7.1 / PHP 8.3)
 - **License**: GPL-2.0-or-later ([LICENSE.txt](tensorcurve/LICENSE.txt))
 
@@ -19,7 +19,7 @@ No paid page builder or required plugin.
 
 ## Daily pricing refresh
 
-A GitHub Actions workflow (`.github/workflows/update-pricing.yml`) runs `scripts/update_pricing.py` once a day. The script reads Verda's public pricing page, extracts the tracked single-GPU configurations and the commitment discount schedule, validates the result, and commits the updated snapshot to `main`. It also records published H100 on-demand prices from Hyperstack and Lambda as comparison points (they publish no term schedule, so no curve is derived; a failure there never blocks the Verda refresh):
+A GitHub Actions workflow (`.github/workflows/update-pricing.yml`) runs `scripts/update_pricing.py` once a day. The script reads Verda's public pricing page, extracts the tracked single-GPU configurations and the commitment discount schedule, validates the result, and commits the updated snapshot to `main`. It also collects H100 comparison prices from other suppliers, each independently so one failure never blocks the rest: Together AI (published reserved rates by duration bucket), Hyperstack and Lambda (on-demand only), and Microsoft Azure (public retail-price API, pay-as-you-go and 1/3/5-year reservations normalised per GPU-hour):
 
 - `tensorcurve/assets/data/pricing-snapshot.json` — current snapshot (the theme's feed)
 - `tensorcurve/assets/data/pricing-snapshot.csv` — same data, flat

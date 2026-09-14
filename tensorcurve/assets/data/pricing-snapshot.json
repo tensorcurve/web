@@ -82,7 +82,7 @@
     "Refreshed automatically once a day from the public source page.",
     "providers: comparison on-demand prices from other suppliers; they publish no term-discount schedule, so no term curve is derived for them."
   ],
-  "collected_at": "2026-09-14T15:29:06+00:00",
+  "collected_at": "2026-09-14T15:36:42+00:00",
   "source_sha256": "719175ad7adea85a3603e77b7afabc2c25aef5e02895f212209b93ed1df27f85",
   "review_status": "automated extraction; validated against sanity bounds",
   "previous_checked_on": "2026-09-14",
@@ -101,7 +101,8 @@
           "max_ram_gb_per_gpu": 240,
           "on_demand_usd": "3.20",
           "reserved_from_usd": "2.72",
-          "reserved_term": "not published (starting-from price)"
+          "reserved_term": "not published (starting-from price)",
+          "term_rates": {}
         },
         "H200": {
           "model": "H200 SXM",
@@ -110,7 +111,8 @@
           "max_ram_gb_per_gpu": 225,
           "on_demand_usd": "3.99",
           "reserved_from_usd": "2.79",
-          "reserved_term": "not published (starting-from price)"
+          "reserved_term": "not published (starting-from price)",
+          "term_rates": {}
         },
         "A100": {
           "model": "A100 SXM",
@@ -119,9 +121,11 @@
           "max_ram_gb_per_gpu": 120,
           "on_demand_usd": "1.60",
           "reserved_from_usd": "1.36",
-          "reserved_term": "not published (starting-from price)"
+          "reserved_term": "not published (starting-from price)",
+          "term_rates": {}
         }
       },
+      "tier": "self-service",
       "checked_on": "2026-09-14",
       "status": "ok",
       "source_sha256": "ed806e0d003a62671f1f6a15ef8f4db268efd34cf922d95e3e88ec36311577bc"
@@ -144,6 +148,7 @@
             "2x": "4.19",
             "1x": "4.29"
           },
+          "term_rates": {},
           "reserved_from_usd": null,
           "reserved_term": "not published (contact sales)"
         },
@@ -156,13 +161,89 @@
             "8x": "1.99",
             "1x": "1.99"
           },
+          "term_rates": {},
           "reserved_from_usd": null,
           "reserved_term": "not published (contact sales)"
         }
       },
+      "tier": "self-service",
       "checked_on": "2026-09-14",
       "status": "ok",
       "source_sha256": "da05e481c34f89c544d375bdeca549edefd5aaa7d083a2c55c1a2439b6682a59"
+    },
+    "together": {
+      "name": "Together AI",
+      "source_url": "https://www.together.ai/pricing",
+      "unit": "USD per GPU-hour, HGX H100 (8-GPU node pricing quoted per GPU)",
+      "classification": "published_reserved_by_duration",
+      "term_schedule_published": true,
+      "tier": "self-service",
+      "gpus": {
+        "H100": {
+          "model": "HGX H100",
+          "preemptible_usd": "1.99",
+          "on_demand_usd": "3.99",
+          "term_rates": {
+            "1": "3.69",
+            "3": "3.45",
+            "6": "3.19"
+          },
+          "term_buckets": {
+            "1": "7-30 days",
+            "3": "31-90 days",
+            "6": "91-180 days"
+          },
+          "reserved_from_usd": null,
+          "reserved_term": "duration buckets as published; longer terms on request"
+        },
+        "H200": {
+          "model": "HGX H200",
+          "preemptible_usd": "2.99",
+          "on_demand_usd": "5.99",
+          "term_rates": {
+            "1": "4.99",
+            "3": "4.15",
+            "6": "3.99"
+          },
+          "term_buckets": {
+            "1": "7-30 days",
+            "3": "31-90 days",
+            "6": "91-180 days"
+          },
+          "reserved_from_usd": null,
+          "reserved_term": "duration buckets as published; longer terms on request"
+        }
+      },
+      "checked_on": "2026-09-14",
+      "status": "ok",
+      "source_sha256": "a751e17fa0e61ae1b9ce58f01f405589cb62e8edfd3fded4d1a3b5d2e2d19f50"
+    },
+    "azure": {
+      "name": "Microsoft Azure",
+      "source_url": "https://azure.microsoft.com/en-us/pricing/details/virtual-machines/linux/",
+      "api_url": "https://prices.azure.com/api/retail/prices?$filter=armSkuName%20eq%20%27Standard_ND96isr_H100_v5%27%20and%20armRegionName%20eq%20%27eastus%27&currencyCode=USD",
+      "unit": "USD per GPU-hour, Standard_ND96isr_H100_v5 (8x H100) in eastus, Linux; VM price divided by 8; reservation total divided by term hours",
+      "classification": "published_reserved_by_term_hyperscaler",
+      "term_schedule_published": true,
+      "tier": "hyperscaler",
+      "gpus": {
+        "H100": {
+          "model": "ND96isr H100 v5 (8x H100 SXM)",
+          "gpu_count": 8,
+          "on_demand_usd": "12.2900",
+          "spot_usd": "2.2712",
+          "term_rates": {
+            "12": "7.8656",
+            "36": "5.3953",
+            "60": "4.9160"
+          },
+          "reserved_from_usd": null,
+          "reserved_term": "1, 3 and 5 year reservations as published"
+        }
+      },
+      "checked_on": "2026-09-14",
+      "status": "ok",
+      "source_sha256": "8150bb8f550f97b4a0c5f7965ff28b509aa5d218005ce518f03f5e3d9d2c9471"
     }
   }
 }

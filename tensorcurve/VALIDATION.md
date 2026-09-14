@@ -56,3 +56,11 @@ Before public launch, complete the real content and operator information, then v
 - Neither publishes a commitment-term schedule, so no curve is derived; the homepage chart draws them as flat dashed/dotted reference lines with a legend and caption, and the axis range expands to include them.
 - A comparison-source failure never blocks the Verda refresh: that provider keeps its previous entry with a `stale:` status and the chart still renders it from the last good value.
 - Rendered with the stubbed WordPress harness and inspected at desktop and 390px widths.
+
+
+## Version 1.4.0 — multi-supplier commitment curves
+- Homepage chart redesigned on a category axis (on-demand, 1, 3, 6, 12 months). Verda's calculated curve and Together AI's published reserved-by-duration curve (7–30 / 31–90 / 91–180 days plotted at 1 / 3 / 6 months) are drawn as lines; Hyperstack and Lambda, which publish on-demand only, are single points; Hyperstack's "starting from" reserved price is a dotted level. Point labels avoid collisions when an on-demand-only point sits near a curve's start.
+- Daily job now also reads Together AI (pricing page GPU table) and Microsoft Azure (public retail-price API: ND96isr H100 v5, eastus, Linux; pay-as-you-go and 1/3/5-year reservation totals normalised per GPU-hour). Verified 2026-09-14: Together 3.99 → 3.69 / 3.45 / 3.19; Azure 12.29 → 7.87 / 5.40 / 4.92 per GPU-hour. Azure is recorded and shown in the caption, not plotted, because it sits several dollars above the self-service tier.
+- OVHcloud was evaluated and excluded: its Savings Plan discounts apply to CPU instance families only, so no H100 term schedule exists; its on-demand H100 price is not tracked.
+- Per-provider validation: on-demand within sanity bounds, every term rate positive and below on-demand; a provider failure keeps its previous entry and never blocks the Verda refresh (exercised when the Together table selector first matched the wrong table).
+- Rendered through the stubbed WordPress harness and inspected at 640px and 390px.
