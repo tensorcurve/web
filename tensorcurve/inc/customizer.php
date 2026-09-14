@@ -22,6 +22,11 @@ function tc_customize($wp_customize){
  'tc_ads_home'=>array('Homepage display-unit slot ID','','text','tc_slot'),
  'tc_ads_article'=>array('Article display-unit slot ID','','text','tc_slot'),
  );
- foreach($settings as $key=>$item){$wp_customize->add_setting($key,array('default'=>$item[1],'sanitize_callback'=>$item[3]));$wp_customize->add_control($key,array('label'=>$item[0],'section'=>'tc_advertising','type'=>$item[2]));}
+ foreach($settings as $key=>$item){$wp_customize->add_setting($key,array('default'=>$item[1],'sanitize_callback'=>$item[3]));$wp_customize->add_control($key,array('label'=>$item[0],'section'=>'tc_advertising','type'=>$item[2]));} $wp_customize->add_section('tc_pricing',array('title'=>'TensorCurve — Pricing data','description'=>'The Pricing Lab reads a daily-updated JSON snapshot. Leave the feed URL empty to use the default published feed. Disable automatic refresh to show only the snapshot bundled with the theme.','priority'=>32));
+ $settings=array(
+ 'tc_pricing_auto'=>array('Refresh pricing data automatically (cached for 6 hours)',true,'checkbox','tc_bool'),
+ 'tc_pricing_feed_url'=>array('Pricing feed URL (JSON). Empty = default feed','','url','esc_url_raw'),
+ );
+ foreach($settings as $key=>$item){$wp_customize->add_setting($key,array('default'=>$item[1],'sanitize_callback'=>$item[3]));$wp_customize->add_control($key,array('label'=>$item[0],'section'=>'tc_pricing','type'=>$item[2]));}
 }
 add_action('customize_register','tc_customize');

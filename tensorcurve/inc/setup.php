@@ -5,7 +5,7 @@ add_action('admin_menu','tc_setup_menu');
 function tc_setup_screen(){
  if(!current_user_can('manage_options'))return;
  ?><div class="wrap"><h1>TensorCurve Setup</h1><p>The theme is ready to use. This optional setup creates missing pages without replacing existing content.</p>
- <ul><li>Published pages: Home, Guides, Pricing Lab, Data Methodology.</li><li>Draft pages: About, Editorial Policy, Contact, Privacy. Review these before publishing.</li><li>Optional sample articles are created as <strong>drafts</strong>, never automatically published.</li><li>Advertising is disabled unless you enable it in Appearance → Customize.</li></ul>
+ <ul><li>Published pages: Home, Guides, Pricing Lab, Data Methodology.</li><li>Draft pages: About, Editorial Policy, Contact, Privacy. Review these before publishing.</li><li>Optional sample articles are created as <strong>drafts</strong>, never automatically published.</li><li>Advertising is disabled unless you enable it in Appearance → Customize.</li><li>Pricing Lab data refreshes automatically from the published daily feed; see Appearance → Customize → TensorCurve — Pricing data.</li></ul>
  <?php if(isset($_GET['tc_done'])): ?><div class="notice notice-success"><p>Setup completed. Review Pages and Posts, then configure Appearance → Customize.</p></div><?php endif; ?>
  <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>"><input type="hidden" name="action" value="tc_setup_site"><?php wp_nonce_field('tc_setup_site'); ?><p><label><input type="checkbox" name="set_home" value="1" checked> Set created Home and Guides pages as front page and posts page.</label></p><p><label><input type="checkbox" name="set_brand" value="1" checked> Set site title to TensorCurve and tagline to Understanding the cost of compute.</label></p><p><label><input type="checkbox" name="samples" value="1"> Import four source-backed editorial articles as drafts.</label></p><?php submit_button('Create missing pages'); ?></form>
  <p>No domain, hosting, search visibility or privacy-consent settings are changed. Your existing site content is not deleted.</p>
@@ -14,7 +14,7 @@ function tc_setup_screen(){
 }
 function tc_create_structure($samples=false,$set_home=false,$set_brand=false){
  $ids=get_option('tc_setup_pages',array());if(!is_array($ids))$ids=array();
- $method=file_get_contents(get_template_directory().'/inc/methodology.html');$method=str_replace('href="/data/', 'href="'.esc_url(get_template_directory_uri()).'/assets/data/', $method);
+ $method=file_get_contents(get_template_directory().'/inc/methodology.html');$method=str_replace(array('href="/data/pricing-snapshot.json"','href="/data/pricing-snapshot.csv"'),array('href="'.esc_url(tc_pricing_download_url('json')).'"','href="'.esc_url(tc_pricing_download_url('csv')).'"'),$method);
  $defs=array(
  'home'=>array('Home','','publish',''),
  'guides'=>array('Guides','','publish',''),

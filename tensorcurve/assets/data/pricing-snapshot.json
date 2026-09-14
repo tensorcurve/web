@@ -1,9 +1,9 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "provider": "Verda",
   "source_url": "https://verda.com/pricing",
-  "checked_on": "2026-09-13",
-  "collection_method": "Public HTML table extraction",
+  "checked_on": "2026-09-14",
+  "collection_method": "Automated daily extraction of the public HTML table and schema.org offers",
   "currency": "USD",
   "unit": "per GPU-hour",
   "region": null,
@@ -17,6 +17,13 @@
     "6": "0.04",
     "12": "0.08"
   },
+  "discounts_all": {
+    "1": "0.02",
+    "3": "0.03",
+    "6": "0.04",
+    "12": "0.08",
+    "24": "0.25"
+  },
   "gpus": {
     "H100": {
       "model": "H100 SXM5",
@@ -25,6 +32,8 @@
       "cpus": 30,
       "ram_gb": 120,
       "base_usd": "3.25",
+      "base_usd_display": "3.25",
+      "spot_usd": "1.6300",
       "rates": {
         "1": "3.1850",
         "3": "3.1525",
@@ -39,6 +48,8 @@
       "cpus": 44,
       "ram_gb": 170,
       "base_usd": "4.20",
+      "base_usd_display": "4.20",
+      "spot_usd": "2.1000",
       "rates": {
         "1": "4.1160",
         "3": "4.0740",
@@ -52,12 +63,14 @@
       "gpu_count": 1,
       "cpus": 22,
       "ram_gb": 120,
-      "base_usd": "1.74",
+      "base_usd": "1.7360",
+      "base_usd_display": "1.74",
+      "spot_usd": "0.8680",
       "rates": {
-        "1": "1.7052",
-        "3": "1.6878",
-        "6": "1.6704",
-        "12": "1.6008"
+        "1": "1.7013",
+        "3": "1.6839",
+        "6": "1.6666",
+        "12": "1.5971"
       }
     }
   },
@@ -65,9 +78,11 @@
     "GPU instances table only; not instant clusters, serverless or spot.",
     "No region or guaranteed start date attached to these extracted rates.",
     "Discount-derived rates are calculations, not separately published quotations.",
-    "Public prices are a dated snapshot; no automatic refresh is enabled."
+    "base_usd is the machine-readable offer price; base_usd_display is the rounded figure shown in the table.",
+    "Refreshed automatically once a day from the public source page."
   ],
-  "collected_at": "2026-09-13T14:40:38.547516+00:00",
+  "collected_at": "2026-09-14T14:47:56+00:00",
   "source_sha256": "719175ad7adea85a3603e77b7afabc2c25aef5e02895f212209b93ed1df27f85",
-  "review_status": "checked against official source"
+  "review_status": "automated extraction; validated against sanity bounds",
+  "previous_checked_on": "2026-09-13"
 }

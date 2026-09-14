@@ -1,6 +1,6 @@
 <?php
 if (!defined('ABSPATH')) { exit; }
-define('TC_VERSION','1.1.0');
+define('TC_VERSION','1.2.0');
 function tc_setup(){
  load_theme_textdomain('tensorcurve',get_template_directory().'/languages');
  add_theme_support('title-tag');add_theme_support('post-thumbnails');add_theme_support('automatic-feed-links');
@@ -17,7 +17,7 @@ function tc_assets(){
  wp_enqueue_style('tc-editorial',$uri.'/assets/editorial.css',$deps,TC_VERSION);
  if(is_page_template('page-pricing.php')){wp_enqueue_style('tc-pricing-light',$uri.'/assets/pricing-light.css',array('tc-editorial'),TC_VERSION);}
  wp_enqueue_style('tc-wordpress',$uri.'/assets/wordpress.css',array('tc-editorial'),TC_VERSION);
- if(is_page_template('page-pricing.php')){wp_enqueue_script('tc-pricing-data',$uri.'/assets/pricing-data.js',array(),TC_VERSION,array('strategy'=>'defer','in_footer'=>true));wp_enqueue_script('tc-pricing',$uri.'/assets/pricing.js',array('tc-pricing-data'),TC_VERSION,array('strategy'=>'defer','in_footer'=>true));}
+ if(is_page_template('page-pricing.php')){wp_enqueue_script('tc-pricing',$uri.'/assets/pricing.js',array(),TC_VERSION,array('strategy'=>'defer','in_footer'=>true));wp_add_inline_script('tc-pricing','window.TENSORCURVE_PRICING='.wp_json_encode(tc_pricing_data(),JSON_HEX_TAG|JSON_HEX_AMP).';','before');}
  if(is_single())wp_enqueue_script('tc-reading',$uri.'/assets/reading.js',array(),TC_VERSION,array('strategy'=>'defer','in_footer'=>true));
  if(is_singular()&&comments_open()&&get_option('thread_comments'))wp_enqueue_script('comment-reply');
 }
@@ -67,6 +67,7 @@ function tc_seo(){
 }
 function tc_description_words(){return 30;}
 add_action('wp_head','tc_seo',5);
+require get_template_directory().'/inc/pricing-data.php';
 require get_template_directory().'/inc/customizer.php';
 require get_template_directory().'/inc/ads.php';
 require get_template_directory().'/inc/setup.php';

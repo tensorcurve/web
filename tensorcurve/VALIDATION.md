@@ -36,3 +36,12 @@ Before public launch, complete the real content and operator information, then v
 - Browser verification: data-script ordering, H100/H200 filters, missing future rates, and mobile width at 390px passed with no page errors.
 - Four English article drafts and the new methodology are included. Import does not replace previously edited posts.
 - Snapshot dated 2026-09-13; automatic refresh is not enabled.
+
+
+## Version 1.2.0 — automatic daily refresh
+- `scripts/update_pricing.py` extracts the Verda GPU instance table (hardware, on-demand, spot), the schema.org on-demand offers and the commitment discount table. Verified against the live page on 2026-09-14: H100 3.25 and H200 4.20 match the 1.1.0 snapshot exactly; A100 now uses the machine-readable 1.736 (displayed 1.74), with the displayed figure recorded as `base_usd_display`.
+- Validation gate: all three configurations present, base in [0.10, 50] USD, term rates below base and decreasing, discounts increasing, no base move above 50% between refreshes. A failing extraction exits non-zero and writes nothing.
+- `inc/pricing-data.php` tested with a stubbed WordPress runtime: fresh feed accepted and cached 6 h; feed older than the bundled file ignored; failed fetch falls back to the last good copy, then the bundled file, with a 30 min retry cache; automatic refresh off uses only the bundled file.
+- `template-parts/curve.php` regenerated from data reproduces the 1.1.0 SVG geometry for identical inputs (same axis range, point coordinates and labels).
+- PHP syntax checks passed for all theme files (PHP 8.4).
+- Not certified: GitHub Actions scheduling delays (cron runs can be late by minutes to an hour), Verda page redesigns (the job fails safe and keeps the previous snapshot), and host-level HTTP egress restrictions that would block the theme's feed fetch (the theme then shows the bundled snapshot).

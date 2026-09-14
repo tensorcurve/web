@@ -2,7 +2,7 @@
 
 Source of the WordPress theme that powers [tensorcurve.com](https://www.tensorcurve.com/), an English editorial site about GPU rental economics.
 
-- **Theme**: `tensorcurve/` — classic WordPress theme, version 1.1.0
+- **Theme**: `tensorcurve/` — classic WordPress theme, version 1.2.0
 - **Requires**: WordPress 6.5+, PHP 8.0+ (validated on WordPress 7.1 / PHP 8.3)
 - **License**: GPL-2.0-or-later ([LICENSE.txt](tensorcurve/LICENSE.txt))
 
@@ -10,12 +10,28 @@ Source of the WordPress theme that powers [tensorcurve.com](https://www.tensorcu
 
 - Dynamic homepage with a featured article, category cards and guide listings
 - Article pages with author metadata, related posts and an auto-generated table of contents
-- **Pricing Lab**: a browser-side view of published GPU tariffs (H100 / H200 / A100 across 1, 3, 6 and 12 month terms) with a JSON/CSV snapshot in `tensorcurve/assets/data/`
+- **Pricing Lab**: a browser-side view of published GPU tariffs (H100 / H200 / A100 across 1, 3, 6 and 12 month terms), refreshed daily (see below)
 - Data methodology page describing the source, check date and calculation rule
 - Optional AdSense slots, off by default; no consent platform, ads.txt or tracking code bundled
 - Optional setup screen (Appearance → TensorCurve Setup) that creates pages and imports four sample articles as drafts
 
-No paid page builder or required plugin. No live GPU price feed is included; the pricing snapshot is a dated manual extract.
+No paid page builder or required plugin.
+
+## Daily pricing refresh
+
+A GitHub Actions workflow (`.github/workflows/update-pricing.yml`) runs `scripts/update_pricing.py` once a day. The script reads Verda's public pricing page, extracts the tracked single-GPU configurations and the commitment discount schedule, validates the result, and commits the updated snapshot to `main`:
+
+- `tensorcurve/assets/data/pricing-snapshot.json` — current snapshot (the theme's feed)
+- `tensorcurve/assets/data/pricing-snapshot.csv` — same data, flat
+- `tensorcurve/assets/data/pricing-history.csv` — one row per GPU × term per day, appended over time
+- `tensorcurve/assets/pricing-data.js` — static JS export
+
+The theme fetches the JSON snapshot from this repository, caches it for six hours, and falls back to the last good copy or the bundled file if the fetch fails. The feed URL and the on/off switch live in Appearance → Customize → TensorCurve — Pricing data. Run the job by hand from the Actions tab (workflow_dispatch) or locally:
+
+```
+python3 scripts/update_pricing.py --check   # fetch and validate only
+python3 scripts/update_pricing.py           # write the data files
+```
 
 ## Install
 
@@ -37,4 +53,6 @@ tensorcurve/
 ├── template-parts/         # card, curve, mini-table
 ├── assets/                 # CSS, JS, favicon, pricing snapshot data
 └── style.css, theme.json, screenshot.png
+scripts/update_pricing.py   # daily extractor
+.github/workflows/          # scheduled refresh
 ```

@@ -1,0 +1,45 @@
+name: Update pricing snapshot
+
+on:
+  schedule:
+    # Daily at 05:17 UTC (14:17 KST). Odd minute avoids the top-of-hour rush.
+    - cron: "17 5 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-pricing
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Extract Verda public tariff
+        id: extract
+        run: python3 scripts/update_pricing.py
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "tensorcurve-bot"
+          git config user.email "bot@tensorcurve.com"
+          git add tensorcurve/assets/data/pricing-snapshot.json \
+                  tensorcurve/assets/data/pricing-snapshot.csv \
+                  tensorcurve/assets/data/pricing-history.csv \
+                  tensorcurve/assets/pricing-data.js
+          if git diff --cached --quiet; then
+            echo "No changes."
+            exit 0
+          fi
+          git commit -m "data: refresh Verda pricing snapshot $(date -u +%Y-%m-%d)"
+          git push origin HEAD:main
