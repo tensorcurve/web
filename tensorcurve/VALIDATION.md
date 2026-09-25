@@ -71,3 +71,8 @@ Before public launch, complete the real content and operator information, then v
 - Setup creates three published pages (h100-pricing, h200-pricing, a100-pricing) with excerpts used as meta descriptions; Dataset JSON-LD with JSON/CSV distributions is emitted on tracker pages unless an SEO plugin is active.
 - Navigation: "H100 prices" in the default main menu, all three trackers in the footer, and a link from the homepage lab feature.
 - Rendered template parts through the stubbed harness for H100, H200 and A100; PHP syntax checks passed. Full page render verified after upload on the live site.
+
+
+## Version 1.5.1 — data-driven "At a glance" on tracker pages
+- Each tracker page now opens with generated sentences computed from the snapshot and history: on-demand range and spread among self-service suppliers, lowest published commitment rate, hyperscaler multiple, premium versus the same supplier's H100 rate (H200/A100 pages), and per-supplier movement over the collected days. The text differs per GPU and changes with the data, addressing "crawled, currently not indexed" on the H200/A100 pages that shared a template with H100.
+- Rendered through the stubbed harness for all three GPUs with the 12-day history; PHP syntax checks passed.

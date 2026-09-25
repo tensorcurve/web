@@ -30,6 +30,9 @@
 .tracker-table .config{min-width:170px;max-width:230px;color:#354c3e}
 .tracker-table .basis{min-width:170px}
 .tracker-intro{margin:0 0 30px;max-width:720px}
+.tracker-glance ul{margin:0;padding:0;list-style:none;border:1px solid #dce6df;background:#f7faf8;border-radius:2px}
+.tracker-glance li{padding:13px 18px;border-bottom:1px solid #e3eae5;font:15.5px/1.65 Georgia,serif;color:#2f4238}
+.tracker-glance li:last-child{border-bottom:0}
 .tracker-table tr.tier-hyperscaler td{background:#fafbfa}
 .tracker-table tr.stale td{color:#8a958e}
 .data-tag{display:inline-block;font-size:11px;letter-spacing:.3px;padding:2px 6px;border:1px solid #cfdad3;border-radius:3px;color:#587466;background:#fff}

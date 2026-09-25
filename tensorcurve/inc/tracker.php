@@ -80,3 +80,32 @@ function tc_tracker_jsonld(){
 add_action('wp_head','tc_tracker_jsonld',6);
 function tc_tracker_flush(){delete_transient('tc_pricing_history');}
 add_action('customize_save_after','tc_tracker_flush');
+
+/** Data-driven "at a glance" sentences for one GPU: unique per page and refreshed with the data. */
+function tc_tracker_glance($gpu){
+ $data=tc_pricing_data();$rows=tc_tracker_rows($gpu,$data);$out=array();if(!$rows)return $out;
+ $usd=function($v,$d=2){return tc_pricing_usd($v,$d);};$pct=function($a,$b){return $b>0?round(($a-$b)/$b*100,1):0;};
+ $self=array_filter($rows,function($r){return $r['tier']!=='hyperscaler';});$hyper=array_filter($rows,function($r){return $r['tier']==='hyperscaler';});
+ // 1) On-demand range among self-service suppliers.
+ if(count($self)>=2){
+  usort($self,function($a,$b){return $a['on_demand']<=>$b['on_demand'];});$lo=reset($self);$hi=end($self);
+  $out[]=sprintf('Among %d self-service suppliers publishing an on-demand %s rate, the lowest is %s at %s per GPU-hour and the highest is %s at %s, a spread of %s%%.',count($self),$gpu,$lo['name'],$usd($lo['on_demand']),$hi['name'],$usd($hi['on_demand']),number_format($pct($hi['on_demand'],$lo['on_demand']),1));
+ }elseif(count($self)===1){$r=reset($self);$out[]=sprintf('Only one self-service supplier we track, %s, publishes an on-demand %s rate: %s per GPU-hour.',$r['name'],$gpu,$usd($r['on_demand']));}
+ // 2) Best published commitment rate.
+ $best=null;foreach($rows as $r){foreach($r['terms'] as $m=>$v){if($r['tier']==='hyperscaler')continue;if($best===null||$v<$best['v'])$best=array('v'=>$v,'m'=>(int)$m,'r'=>$r);}}
+ if($best){$m=$best['m'];$term=$m>=12&&$m%12===0?($m/12).'-year':$m.'-month';$out[]=sprintf('The lowest published commitment rate is %s at %s per GPU-hour for a %s term, %s%% below its own on-demand price.',$best['r']['name'],$usd($best['v']),$term,number_format(abs($pct($best['v'],$best['r']['on_demand'])),1));}
+ // 3) Hyperscaler comparison.
+ foreach($hyper as $r){$long=$r['terms']?end($r['terms']):null;$lm=$r['terms']?array_key_last($r['terms']):null;$cheapest=$self?min(array_map(function($x){return $x['on_demand'];},$self)):null;
+  $s=sprintf('%s lists %s at %s per GPU-hour on-demand',$r['name'],$gpu,$usd($r['on_demand']));if($cheapest)$s.=sprintf(', %.1f× the cheapest self-service on-demand rate',$r['on_demand']/$cheapest);if($long!==null)$s.=sprintf('; its longest published reservation (%s) brings that to %s',((int)$lm>=12?((int)$lm/12).'-year':$lm.'-month'),$usd($long));$out[]=$s.'.';}
+ // 4) Premium versus H100 at suppliers publishing both.
+ if($gpu!=='H100'){$h100=tc_tracker_rows('H100',$data);$by=array();foreach($h100 as $r)$by[$r['key']]=$r['on_demand'];$parts=array();
+  foreach($rows as $r){if(isset($by[$r['key']])&&$by[$r['key']]>0){$d=$pct($r['on_demand'],$by[$r['key']]);$parts[]=sprintf('%s %s%s%%',$r['name'],$d>=0?'+':'−',number_format(abs($d),1));}}
+  if($parts)$out[]=sprintf('Relative to the same supplier’s H100 on-demand rate, %s is priced at %s.',$gpu,implode(', ',$parts));}
+ // 5) Movement over the collected history.
+ $hist=tc_tracker_series($gpu);$dates=$hist['dates'];$n=count($dates);
+ if($n>=2){$moved=array();$flat=array();foreach($hist['series'] as $name=>$s){$first=reset($s);$last=end($s);$changes=0;$prev=null;foreach($s as $v){if($prev!==null&&abs($v-$prev)>0.00001)$changes++;$prev=$v;}
+   if(abs($last-$first)>0.00001)$moved[]=sprintf('%s moved from %s to %s (%s%s%%, %d change%s)',$name,$usd($first),$usd($last),$last>=$first?'+':'−',number_format(abs($pct($last,$first)),1),$changes,$changes===1?'':'s');else $flat[]=$name;}
+  $s=sprintf('Over the %d days collected so far (%s to %s), ',$n,tc_pricing_date(array('checked_on'=>$dates[0])),tc_pricing_date(array('checked_on'=>$dates[$n-1])));
+  if($moved)$s.=implode('; ',$moved).($flat?'; ':'.');if($flat)$s.=implode(', ',$flat).' '.(count($flat)===1?'has':'have').' not changed'.($moved?'.':' the published on-demand rate.');$out[]=$s;}
+ return $out;
+}

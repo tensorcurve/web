@@ -1,6 +1,6 @@
 <?php
 if (!defined('ABSPATH')) { exit; }
-define('TC_VERSION','1.5.0');
+define('TC_VERSION','1.5.1');
 function tc_setup(){
  load_theme_textdomain('tensorcurve',get_template_directory().'/languages');
  add_theme_support('title-tag');add_theme_support('post-thumbnails');add_theme_support('automatic-feed-links');
