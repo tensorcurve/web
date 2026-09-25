@@ -6,7 +6,7 @@
 
 1. 나중에 호스팅과 워드프레스를 준비합니다. 테마를 보관하는 동안 호스팅을 결제할 필요는 없습니다.
 2. 워드프레스 관리자 → 외모(Appearance) → 테마(Themes) → 새 테마 추가(Add New) → 테마 업로드(Upload Theme).
-3. `TensorCurve-1.5.1.zip`을 압축 해제하지 않고 선택 → 지금 설치 → 활성화.
+3. `TensorCurve-1.5.2.zip`을 압축 해제하지 않고 선택 → 지금 설치 → 활성화.
 4. 외모 → TensorCurve Setup으로 이동합니다.
 5. 새 사이트라면 Home/Guides 설정과 TensorCurve 이름 설정을 체크한 채 Create missing pages를 누릅니다.
 6. 기존 사이트에서 설치할 경우 두 체크박스를 해제하면 기존 홈페이지 및 사이트 이름을 유지합니다. 기존 글과 페이지를 삭제하지 않습니다.
@@ -121,3 +121,8 @@ SEO 플러그인은 하나만 사용하세요. 현재 시안의 chatgpt.site 주
 ## 1.5 GPU별 가격 추적 페이지
 
 테마를 교체한 뒤 **외모 → TensorCurve Setup → Create missing pages**를 한 번 누르면 H100, H200, A100 가격 추적 페이지 3개가 공개 상태로 생성됩니다(기존 페이지는 건드리지 않습니다). 각 페이지에는 공급자별 가격표, 약정 곡선, 일별 온디맨드 가격 추이, JSON/CSV 다운로드가 있고 모두 매일 자동 갱신됩니다. 기본 메뉴에 "H100 prices"가 추가되고, 푸터에 세 페이지 링크가 들어갑니다. 검색 설명문(메타 description)은 페이지의 요약(Excerpt)에서 가져오므로 필요하면 페이지 편집 화면에서 다듬을 수 있습니다.
+
+
+## 1.5.2 검색용 사이트 정보
+
+홈 화면에 검색 설명문과 사이트 정체를 알리는 구조화 데이터(WebSite, Organization)가 들어갑니다. 설명문은 외모 → 사용자 정의하기 → TensorCurve — Publication → Homepage search description에서 바꿀 수 있습니다. 같은 곳의 Official profiles 칸에 LinkedIn, X, GitHub 같은 공식 계정 주소를 한 줄에 하나씩 넣으면 구글이 사이트와 계정을 같은 주체로 연결합니다.

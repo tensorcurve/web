@@ -76,3 +76,9 @@ Before public launch, complete the real content and operator information, then v
 ## Version 1.5.1 — data-driven "At a glance" on tracker pages
 - Each tracker page now opens with generated sentences computed from the snapshot and history: on-demand range and spread among self-service suppliers, lowest published commitment rate, hyperscaler multiple, premium versus the same supplier's H100 rate (H200/A100 pages), and per-supplier movement over the collected days. The text differs per GPU and changes with the data, addressing "crawled, currently not indexed" on the H200/A100 pages that shared a template with H100.
 - Rendered through the stubbed harness for all three GPUs with the 12-day history; PHP syntax checks passed.
+
+
+## Version 1.5.2 — homepage identity for search
+- The front page had no meta description, so Google built its snippet from navigation text. It now falls back to a publication description (editable in Customize → TensorCurve — Publication → Homepage search description).
+- The front page emits WebSite and Organization JSON-LD (name, alternate names, URL, description, logo or site icon, optional official profiles and editorial email) so search engines can identify the publication. Suppressed when an SEO plugin is active, like the theme's other SEO output.
+- PHP syntax checks passed; JSON-LD output validated as parseable JSON through the stubbed harness.

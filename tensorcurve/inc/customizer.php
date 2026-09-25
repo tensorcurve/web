@@ -9,6 +9,8 @@ function tc_customize($wp_customize){
  'tc_footer_note'=>array('Footer description','Understanding the cost of compute.','text','sanitize_text_field'),
  'tc_demo_notice'=>array('Show editorial preview banner',false,'checkbox','tc_bool'),
  'tc_contact_email'=>array('Public editorial email (visible to visitors)','','email','sanitize_email'),
+ 'tc_home_description'=>array('Homepage search description (leave empty for the default)','','textarea','sanitize_textarea_field'),
+ 'tc_same_as'=>array('Official profiles, one URL per line (LinkedIn, X, GitHub…) for search engines','','textarea','sanitize_textarea_field'),
  );
  foreach($settings as $key=>$item){$wp_customize->add_setting($key,array('default'=>$item[1],'sanitize_callback'=>$item[3]));$wp_customize->add_control($key,array('label'=>$item[0],'section'=>'tc_publication','type'=>$item[2]));}
  $choices=array(0=>'Latest published article');foreach(get_posts(array('numberposts'=>100,'post_status'=>'publish')) as $p)$choices[$p->ID]=$p->post_title;

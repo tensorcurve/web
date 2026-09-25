@@ -2,7 +2,7 @@
 
 Source of the WordPress theme that powers [tensorcurve.com](https://www.tensorcurve.com/), an English editorial site about GPU rental economics.
 
-- **Theme**: `tensorcurve/` — classic WordPress theme, version 1.5.1
+- **Theme**: `tensorcurve/` — classic WordPress theme, version 1.5.2
 - **Requires**: WordPress 6.5+, PHP 8.0+ (validated on WordPress 7.1 / PHP 8.3)
 - **License**: GPL-2.0-or-later ([LICENSE.txt](tensorcurve/LICENSE.txt))
 

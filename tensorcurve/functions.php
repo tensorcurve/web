@@ -1,6 +1,6 @@
 <?php
 if (!defined('ABSPATH')) { exit; }
-define('TC_VERSION','1.5.1');
+define('TC_VERSION','1.5.2');
 function tc_setup(){
  load_theme_textdomain('tensorcurve',get_template_directory().'/languages');
  add_theme_support('title-tag');add_theme_support('post-thumbnails');add_theme_support('automatic-feed-links');
@@ -51,6 +51,7 @@ function tc_seo(){
  if(tc_has_seo_plugin())return;
  $desc=is_singular()?get_the_excerpt(get_queried_object_id()):get_bloginfo('description');
  if(is_category()||is_tag()||is_tax())$desc=term_description();
+ if(is_front_page()&&!trim(wp_strip_all_tags((string)$desc)))$desc=tc_home_description();
  $desc=wp_trim_words(wp_strip_all_tags($desc), tc_description_words(), '…');
  if($desc)echo '<meta name="description" content="'.esc_attr($desc).'">' ."\n";
  if(is_singular()&&!post_password_required()){
@@ -65,7 +66,26 @@ function tc_seo(){
   }
  }
 }
-function tc_description_words(){return 30;}
+function tc_description_words(){return 40;}
+function tc_home_description(){
+ $d=get_theme_mod('tc_home_description','');
+ return $d?$d:'TensorCurve is an independent English-language publication on GPU rental economics. It tracks published H100, H200 and A100 cloud prices from several suppliers every day and explains commitment terms, forward starts and total compute cost.';
+}
+/** Front page: WebSite and Organization structured data so search engines can identify the publication. */
+function tc_site_jsonld(){
+ if(!is_front_page()||tc_has_seo_plugin())return;
+ $home=home_url('/');$name=get_bloginfo('name');
+ $org=array('@type'=>'Organization','@id'=>$home.'#organization','name'=>$name,'url'=>$home,'description'=>tc_home_description());
+ $logo_id=get_theme_mod('custom_logo');$logo=$logo_id?wp_get_attachment_image_url($logo_id,'full'):'';
+ if(!$logo&&has_site_icon())$logo=get_site_icon_url(512);
+ if($logo)$org['logo']=array('@type'=>'ImageObject','url'=>$logo);
+ $same=array_filter(array_map('trim',explode("\n",(string)get_theme_mod('tc_same_as',''))));if($same)$org['sameAs']=array_values(array_map('esc_url_raw',$same));
+ $email=sanitize_email(get_theme_mod('tc_contact_email',''));if($email)$org['email']=$email;
+ $site=array('@type'=>'WebSite','@id'=>$home.'#website','name'=>$name,'alternateName'=>array('Tensor Curve','tensorcurve.com'),'url'=>$home,'description'=>get_bloginfo('description'),'inLanguage'=>'en','publisher'=>array('@id'=>$home.'#organization'));
+ $data=array('@context'=>'https://schema.org','@graph'=>array($site,$org));
+ echo '<script type="application/ld+json">'.wp_json_encode($data,JSON_HEX_TAG|JSON_HEX_AMP|JSON_UNESCAPED_SLASHES).'</script>'."\n";
+}
+add_action('wp_head','tc_site_jsonld',6);
 add_action('wp_head','tc_seo',5);
 require get_template_directory().'/inc/pricing-data.php';
 require get_template_directory().'/inc/tracker.php';
