@@ -34,6 +34,15 @@ python3 scripts/update_pricing.py --check   # fetch and validate only
 python3 scripts/update_pricing.py           # write the data files
 ```
 
+## Traffic and search report
+
+`scripts/site_report.py` reads Google Analytics 4 and Search Console with a read-only service account and prints users, sessions, page views, channels, top pages, search queries and positions, each compared with the previous period. It uses only the Python standard library and the system `openssl`. Credentials come from environment variables (`GA_SA_JSON`, `GA_PROPERTY_ID`, optional `GSC_SITE`) and are never stored in the repository.
+
+```
+python3 scripts/site_report.py            # last 28 days vs previous 28
+python3 scripts/site_report.py --days 7
+```
+
 ## Install
 
 1. Zip the `tensorcurve/` directory (or download a release zip).
