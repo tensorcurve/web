@@ -2,7 +2,7 @@
   "schema_version": 2,
   "provider": "Verda",
   "source_url": "https://verda.com/pricing",
-  "checked_on": "2026-10-07",
+  "checked_on": "2026-10-08",
   "collection_method": "Automated daily extraction of the public HTML table and schema.org offers",
   "currency": "USD",
   "unit": "per GPU-hour",
@@ -31,14 +31,14 @@
       "gpu_count": 1,
       "cpus": 30,
       "ram_gb": 120,
-      "base_usd": "3.8120",
-      "base_usd_display": "3.81",
-      "spot_usd": "1.9100",
+      "base_usd": "3.85",
+      "base_usd_display": "3.85",
+      "spot_usd": "1.9300",
       "rates": {
-        "1": "3.7358",
-        "3": "3.6976",
-        "6": "3.6595",
-        "12": "3.5070"
+        "1": "3.7730",
+        "3": "3.7345",
+        "6": "3.6960",
+        "12": "3.5420"
       }
     },
     "H200": {
@@ -47,14 +47,14 @@
       "gpu_count": 1,
       "cpus": 44,
       "ram_gb": 170,
-      "base_usd": "4.9730",
-      "base_usd_display": "4.97",
-      "spot_usd": "2.4900",
+      "base_usd": "5.0230",
+      "base_usd_display": "5.02",
+      "spot_usd": "2.5100",
       "rates": {
-        "1": "4.8735",
-        "3": "4.8238",
-        "6": "4.7741",
-        "12": "4.5752"
+        "1": "4.9225",
+        "3": "4.8723",
+        "6": "4.8221",
+        "12": "4.6212"
       }
     },
     "A100": {
@@ -63,14 +63,14 @@
       "gpu_count": 1,
       "cpus": 22,
       "ram_gb": 120,
-      "base_usd": "1.8330",
-      "base_usd_display": "1.83",
-      "spot_usd": "0.9165",
+      "base_usd": "1.8510",
+      "base_usd_display": "1.85",
+      "spot_usd": "0.9255",
       "rates": {
-        "1": "1.7963",
-        "3": "1.7780",
-        "6": "1.7597",
-        "12": "1.6864"
+        "1": "1.8140",
+        "3": "1.7955",
+        "6": "1.7770",
+        "12": "1.7029"
       }
     }
   },
@@ -82,10 +82,10 @@
     "Refreshed automatically once a day from the public source page.",
     "providers: comparison on-demand prices from other suppliers; they publish no term-discount schedule, so no term curve is derived for them."
   ],
-  "collected_at": "2026-10-07T05:35:15+00:00",
-  "source_sha256": "bbe3e95cd3711e3406a2e67e5a0bfd5dd5a6265f37da6e7ce6696f8b9d4324fc",
+  "collected_at": "2026-10-08T05:34:49+00:00",
+  "source_sha256": "a63795d5a52bed0e503e8fbead7cc39ab2fda0351106b4764296c028333d55d1",
   "review_status": "automated extraction; validated against sanity bounds",
-  "previous_checked_on": "2026-10-06",
+  "previous_checked_on": "2026-10-07",
   "providers": {
     "hyperstack": {
       "name": "Hyperstack",
@@ -126,7 +126,7 @@
         }
       },
       "tier": "self-service",
-      "checked_on": "2026-10-07",
+      "checked_on": "2026-10-08",
       "status": "ok",
       "source_sha256": "ed806e0d003a62671f1f6a15ef8f4db268efd34cf922d95e3e88ec36311577bc"
     },
@@ -167,7 +167,7 @@
         }
       },
       "tier": "self-service",
-      "checked_on": "2026-10-07",
+      "checked_on": "2026-10-08",
       "status": "ok",
       "source_sha256": "7b0772a9d773f30152b127e3ca46c0772158d1f3846d23763e04d8a406e20506"
     },
@@ -189,7 +189,7 @@
             "6": "3.19"
           },
           "term_buckets": {
-            "1": "7-30 days",
+            "1": "3-30 days",
             "3": "31-90 days",
             "6": "91-180 days"
           },
@@ -206,7 +206,7 @@
             "6": "3.99"
           },
           "term_buckets": {
-            "1": "7-30 days",
+            "1": "3-30 days",
             "3": "31-90 days",
             "6": "91-180 days"
           },
@@ -214,9 +214,9 @@
           "reserved_term": "duration buckets as published; longer terms on request"
         }
       },
-      "checked_on": "2026-10-07",
+      "checked_on": "2026-10-08",
       "status": "ok",
-      "source_sha256": "596130adb15bf3ba9414fe7f5484f1d3467eef0397086ed9fe981a3b1bb640de"
+      "source_sha256": "f535a19de9b1d55c4914b1a9ef3eedac5441fa35394f265c211679c40c84d483"
     },
     "azure": {
       "name": "Microsoft Azure",
@@ -241,7 +241,7 @@
           "reserved_term": "1, 3 and 5 year reservations as published"
         }
       },
-      "checked_on": "2026-10-07",
+      "checked_on": "2026-10-08",
       "status": "ok",
       "source_sha256": "8150bb8f550f97b4a0c5f7965ff28b509aa5d218005ce518f03f5e3d9d2c9471"
     }
