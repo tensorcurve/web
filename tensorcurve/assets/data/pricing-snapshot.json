@@ -2,7 +2,7 @@
   "schema_version": 2,
   "provider": "Verda",
   "source_url": "https://verda.com/pricing",
-  "checked_on": "2026-10-15",
+  "checked_on": "2026-10-16",
   "collection_method": "Automated daily extraction of the public HTML table and schema.org offers",
   "currency": "USD",
   "unit": "per GPU-hour",
@@ -31,14 +31,14 @@
       "gpu_count": 1,
       "cpus": 30,
       "ram_gb": 120,
-      "base_usd": "4.1280",
-      "base_usd_display": "4.13",
-      "spot_usd": "2.0600",
+      "base_usd": "4.2110",
+      "base_usd_display": "4.21",
+      "spot_usd": "2.1100",
       "rates": {
-        "1": "4.0454",
-        "3": "4.0042",
-        "6": "3.9629",
-        "12": "3.7978"
+        "1": "4.1268",
+        "3": "4.0847",
+        "6": "4.0426",
+        "12": "3.8741"
       }
     },
     "H200": {
@@ -47,14 +47,14 @@
       "gpu_count": 1,
       "cpus": 44,
       "ram_gb": 170,
-      "base_usd": "5.3840",
-      "base_usd_display": "5.38",
-      "spot_usd": "2.6900",
+      "base_usd": "5.4920",
+      "base_usd_display": "5.49",
+      "spot_usd": "2.7500",
       "rates": {
-        "1": "5.2763",
-        "3": "5.2225",
-        "6": "5.1686",
-        "12": "4.9533"
+        "1": "5.3822",
+        "3": "5.3272",
+        "6": "5.2723",
+        "12": "5.0526"
       }
     },
     "A100": {
@@ -63,14 +63,14 @@
       "gpu_count": 1,
       "cpus": 22,
       "ram_gb": 120,
-      "base_usd": "1.9760",
-      "base_usd_display": "1.98",
-      "spot_usd": "0.9880",
+      "base_usd": "2.0160",
+      "base_usd_display": "2.02",
+      "spot_usd": "1.0100",
       "rates": {
-        "1": "1.9365",
-        "3": "1.9167",
-        "6": "1.8970",
-        "12": "1.8179"
+        "1": "1.9757",
+        "3": "1.9555",
+        "6": "1.9354",
+        "12": "1.8547"
       }
     }
   },
@@ -82,10 +82,10 @@
     "Refreshed automatically once a day from the public source page.",
     "providers: comparison on-demand prices from other suppliers; they publish no term-discount schedule, so no term curve is derived for them."
   ],
-  "collected_at": "2026-10-15T05:49:37+00:00",
-  "source_sha256": "e25fbd21380f2447c48d7d5e06d1f19b6c0f36454ced93d3647dac2c6d5fca22",
+  "collected_at": "2026-10-16T09:54:33+00:00",
+  "source_sha256": "67ef49a27c150ede361f1ca49120e2a139219c19e96b68513468a80729ae31bc",
   "review_status": "automated extraction; validated against sanity bounds",
-  "previous_checked_on": "2026-10-14",
+  "previous_checked_on": "2026-10-15",
   "providers": {
     "hyperstack": {
       "name": "Hyperstack",
@@ -126,7 +126,7 @@
         }
       },
       "tier": "self-service",
-      "checked_on": "2026-10-15",
+      "checked_on": "2026-10-16",
       "status": "ok",
       "source_sha256": "ed806e0d003a62671f1f6a15ef8f4db268efd34cf922d95e3e88ec36311577bc"
     },
@@ -167,7 +167,7 @@
         }
       },
       "tier": "self-service",
-      "checked_on": "2026-10-15",
+      "checked_on": "2026-10-16",
       "status": "ok",
       "source_sha256": "8449c3b2df674962ed0c757265983169e095cdc75b821082dbe19cb84c50d900"
     },
@@ -214,9 +214,9 @@
           "reserved_term": "duration buckets as published; longer terms on request"
         }
       },
-      "checked_on": "2026-10-15",
+      "checked_on": "2026-10-16",
       "status": "ok",
-      "source_sha256": "a192d65628403eaa83e32c94171574b472a811060ea7b80ce7920bfd1cfa3707"
+      "source_sha256": "572146d125f892eedc9b13455026419ad12dace172c6395e2c378e4b914ad1dd"
     },
     "azure": {
       "name": "Microsoft Azure",
@@ -241,7 +241,7 @@
           "reserved_term": "1, 3 and 5 year reservations as published"
         }
       },
-      "checked_on": "2026-10-15",
+      "checked_on": "2026-10-16",
       "status": "ok",
       "source_sha256": "8150bb8f550f97b4a0c5f7965ff28b509aa5d218005ce518f03f5e3d9d2c9471"
     }
