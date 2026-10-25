@@ -2,7 +2,7 @@
   "schema_version": 2,
   "provider": "Verda",
   "source_url": "https://verda.com/pricing",
-  "checked_on": "2026-10-24",
+  "checked_on": "2026-10-25",
   "collection_method": "Automated daily extraction of the public HTML table and schema.org offers",
   "currency": "USD",
   "unit": "per GPU-hour",
@@ -82,10 +82,10 @@
     "Refreshed automatically once a day from the public source page.",
     "providers: comparison on-demand prices from other suppliers; they publish no term-discount schedule, so no term curve is derived for them."
   ],
-  "collected_at": "2026-10-24T09:36:26+00:00",
+  "collected_at": "2026-10-25T09:53:17+00:00",
   "source_sha256": "c0fb76f427f514ac670b887fc243e1f6d86f6cbab9c2aefa007fec30e6c43473",
   "review_status": "automated extraction; validated against sanity bounds",
-  "previous_checked_on": "2026-10-23",
+  "previous_checked_on": "2026-10-24",
   "providers": {
     "hyperstack": {
       "name": "Hyperstack",
@@ -126,7 +126,7 @@
         }
       },
       "tier": "self-service",
-      "checked_on": "2026-10-24",
+      "checked_on": "2026-10-25",
       "status": "ok",
       "source_sha256": "ed806e0d003a62671f1f6a15ef8f4db268efd34cf922d95e3e88ec36311577bc"
     },
@@ -167,7 +167,7 @@
         }
       },
       "tier": "self-service",
-      "checked_on": "2026-10-24",
+      "checked_on": "2026-10-25",
       "status": "ok",
       "source_sha256": "f994c31b5bee26badd444b9d113da6b93088e6a678b8bb4b31b6d5296cbf19d2"
     },
@@ -214,7 +214,7 @@
           "reserved_term": "duration buckets as published; longer terms on request"
         }
       },
-      "checked_on": "2026-10-24",
+      "checked_on": "2026-10-25",
       "status": "ok",
       "source_sha256": "c24f25c40dc0b9521777a3223aeed3e3a60787fd03e735ebaf2b52e5088efa36"
     },
@@ -241,7 +241,7 @@
           "reserved_term": "1, 3 and 5 year reservations as published"
         }
       },
-      "checked_on": "2026-10-24",
+      "checked_on": "2026-10-25",
       "status": "ok",
       "source_sha256": "8150bb8f550f97b4a0c5f7965ff28b509aa5d218005ce518f03f5e3d9d2c9471"
     }
