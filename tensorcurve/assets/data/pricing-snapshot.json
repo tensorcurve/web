@@ -2,7 +2,7 @@
   "schema_version": 2,
   "provider": "Verda",
   "source_url": "https://verda.com/pricing",
-  "checked_on": "2026-10-30",
+  "checked_on": "2026-10-31",
   "collection_method": "Automated daily extraction of the public HTML table and schema.org offers",
   "currency": "USD",
   "unit": "per GPU-hour",
@@ -82,10 +82,10 @@
     "Refreshed automatically once a day from the public source page.",
     "providers: comparison on-demand prices from other suppliers; they publish no term-discount schedule, so no term curve is derived for them."
   ],
-  "collected_at": "2026-10-30T11:27:02+00:00",
-  "source_sha256": "1a4bd14d4b7bb0ef892e6b24adb906d83a04b33063039ccbb9f1cf88734223a0",
+  "collected_at": "2026-10-31T10:57:45+00:00",
+  "source_sha256": "f6cf204a637190bd6c51a7cd00a11dedd863c5307cd8334d93bb8607b25c18b1",
   "review_status": "automated extraction; validated against sanity bounds",
-  "previous_checked_on": "2026-10-29",
+  "previous_checked_on": "2026-10-30",
   "providers": {
     "hyperstack": {
       "name": "Hyperstack",
@@ -126,7 +126,7 @@
         }
       },
       "tier": "self-service",
-      "checked_on": "2026-10-30",
+      "checked_on": "2026-10-31",
       "status": "ok",
       "source_sha256": "e726272af9e8e48afb1e9a3dec98fa897d7d725f2ff2866a862277076079754f"
     },
@@ -167,7 +167,7 @@
         }
       },
       "tier": "self-service",
-      "checked_on": "2026-10-30",
+      "checked_on": "2026-10-31",
       "status": "ok",
       "source_sha256": "09c05daa10810eddac6145adfc09ae81b8a2433b794472049cedf9d479f07e8e"
     },
@@ -214,7 +214,7 @@
           "reserved_term": "duration buckets as published; longer terms on request"
         }
       },
-      "checked_on": "2026-10-30",
+      "checked_on": "2026-10-31",
       "status": "ok",
       "source_sha256": "f19bba92c79c9e5e1572feb0e424cb0456c1fbce1e8280b784c9348064460738"
     },
@@ -241,7 +241,7 @@
           "reserved_term": "1, 3 and 5 year reservations as published"
         }
       },
-      "checked_on": "2026-10-30",
+      "checked_on": "2026-10-31",
       "status": "ok",
       "source_sha256": "8150bb8f550f97b4a0c5f7965ff28b509aa5d218005ce518f03f5e3d9d2c9471"
     }
