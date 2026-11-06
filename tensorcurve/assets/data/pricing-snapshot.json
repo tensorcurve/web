@@ -2,7 +2,7 @@
   "schema_version": 2,
   "provider": "Verda",
   "source_url": "https://verda.com/pricing",
-  "checked_on": "2026-11-05",
+  "checked_on": "2026-11-06",
   "collection_method": "Automated daily extraction of the public HTML table and schema.org offers",
   "currency": "USD",
   "unit": "per GPU-hour",
@@ -31,14 +31,14 @@
       "gpu_count": 1,
       "cpus": 30,
       "ram_gb": 120,
-      "base_usd": "4.8890",
-      "base_usd_display": "4.89",
-      "spot_usd": "2.4450",
+      "base_usd": "4.9380",
+      "base_usd_display": "4.94",
+      "spot_usd": "2.4690",
       "rates": {
-        "1": "4.7912",
-        "3": "4.7423",
-        "6": "4.6934",
-        "12": "4.4979"
+        "1": "4.8392",
+        "3": "4.7899",
+        "6": "4.7405",
+        "12": "4.5430"
       }
     },
     "H200": {
@@ -47,14 +47,14 @@
       "gpu_count": 1,
       "cpus": 44,
       "ram_gb": 170,
-      "base_usd": "6.3760",
-      "base_usd_display": "6.38",
-      "spot_usd": "3.1880",
+      "base_usd": "6.44",
+      "base_usd_display": "6.44",
+      "spot_usd": "3.2200",
       "rates": {
-        "1": "6.2485",
-        "3": "6.1847",
-        "6": "6.1210",
-        "12": "5.8659"
+        "1": "6.3112",
+        "3": "6.2468",
+        "6": "6.1824",
+        "12": "5.9248"
       }
     },
     "A100": {
@@ -63,14 +63,14 @@
       "gpu_count": 1,
       "cpus": 22,
       "ram_gb": 120,
-      "base_usd": "2.2930",
-      "base_usd_display": "2.29",
-      "spot_usd": "1.1470",
+      "base_usd": "2.3160",
+      "base_usd_display": "2.32",
+      "spot_usd": "1.1580",
       "rates": {
-        "1": "2.2471",
-        "3": "2.2242",
-        "6": "2.2013",
-        "12": "2.1096"
+        "1": "2.2697",
+        "3": "2.2465",
+        "6": "2.2234",
+        "12": "2.1307"
       }
     }
   },
@@ -82,10 +82,10 @@
     "Refreshed automatically once a day from the public source page.",
     "providers: comparison on-demand prices from other suppliers; they publish no term-discount schedule, so no term curve is derived for them."
   ],
-  "collected_at": "2026-11-05T13:17:03+00:00",
-  "source_sha256": "535b274c07cb36ee0b794ca76209ae482a6e96e6c451f73b054ab429c5e8df31",
+  "collected_at": "2026-11-06T13:00:23+00:00",
+  "source_sha256": "a91ff6612d2bfc0bfa3cc1a8a6ec3441ea6997609e0312d40106e435b67410c8",
   "review_status": "automated extraction; validated against sanity bounds",
-  "previous_checked_on": "2026-11-04",
+  "previous_checked_on": "2026-11-05",
   "providers": {
     "hyperstack": {
       "name": "Hyperstack",
@@ -126,9 +126,9 @@
         }
       },
       "tier": "self-service",
-      "checked_on": "2026-11-05",
+      "checked_on": "2026-11-06",
       "status": "ok",
-      "source_sha256": "1e37cb5d158d38e5f3dae7c49b906a54496e2f0bb68b320dfbd78776041898ca"
+      "source_sha256": "135d06763ae45aadb9d85d5009f668f1c78e3d5e65edabd5e00426bd7479acbc"
     },
     "lambda": {
       "name": "Lambda",
@@ -141,11 +141,11 @@
           "model": "H100 SXM",
           "vram_gb": 80,
           "vcpus": 26,
-          "on_demand_usd": "4.29",
+          "on_demand_usd": "4.89",
           "on_demand_usd_by_instance_size": {
-            "4x": "4.09",
-            "2x": "4.19",
-            "1x": "4.29"
+            "4x": "4.69",
+            "2x": "4.79",
+            "1x": "4.89"
           },
           "term_rates": {},
           "reserved_from_usd": null,
@@ -165,9 +165,9 @@
         }
       },
       "tier": "self-service",
-      "checked_on": "2026-11-05",
+      "checked_on": "2026-11-06",
       "status": "ok",
-      "source_sha256": "ffab9f003d88e843c4614b35a75bb73296ad9f86b70b3609935b0d1d61b7f5e3"
+      "source_sha256": "444b183e0efd8e1ccaf685014ca181579a1e3205733c41745c61a48ea0d00eaa"
     },
     "together": {
       "name": "Together AI",
@@ -212,9 +212,9 @@
           "reserved_term": "duration buckets as published; longer terms on request"
         }
       },
-      "checked_on": "2026-11-05",
+      "checked_on": "2026-11-06",
       "status": "ok",
-      "source_sha256": "280595d6965e6dd681cc862860e123270d7db41ac50482638ec32da2d02b4340"
+      "source_sha256": "b47eaf4eaadd691a420ee50fc1d988cf8110e1419725e2b4df77766be38f83a7"
     },
     "azure": {
       "name": "Microsoft Azure",
@@ -239,7 +239,7 @@
           "reserved_term": "1, 3 and 5 year reservations as published"
         }
       },
-      "checked_on": "2026-11-05",
+      "checked_on": "2026-11-06",
       "status": "ok",
       "source_sha256": "8150bb8f550f97b4a0c5f7965ff28b509aa5d218005ce518f03f5e3d9d2c9471"
     }
