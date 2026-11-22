@@ -2,7 +2,7 @@
   "schema_version": 2,
   "provider": "Verda",
   "source_url": "https://verda.com/pricing",
-  "checked_on": "2026-11-21",
+  "checked_on": "2026-11-22",
   "collection_method": "Automated daily extraction of the public HTML table and schema.org offers",
   "currency": "USD",
   "unit": "per GPU-hour",
@@ -82,10 +82,10 @@
     "Refreshed automatically once a day from the public source page.",
     "providers: comparison on-demand prices from other suppliers; they publish no term-discount schedule, so no term curve is derived for them."
   ],
-  "collected_at": "2026-11-21T13:32:36+00:00",
-  "source_sha256": "e5d354ae003a833946568f2eb133f0605a02a8f7a1d4a8b123a9d9a17d21fcfa",
+  "collected_at": "2026-11-22T13:25:22+00:00",
+  "source_sha256": "bb041701cd6c81501f86ea3e6dce9cfea87374297e6333d39ba348690097c10a",
   "review_status": "automated extraction; validated against sanity bounds",
-  "previous_checked_on": "2026-11-20",
+  "previous_checked_on": "2026-11-21",
   "providers": {
     "hyperstack": {
       "name": "Hyperstack",
@@ -126,7 +126,7 @@
         }
       },
       "tier": "self-service",
-      "checked_on": "2026-11-21",
+      "checked_on": "2026-11-22",
       "status": "ok",
       "source_sha256": "407be88a52b0a17152f2c89c69404e0cfb6e584ce679cecb3bc745d5edba48d4"
     },
@@ -165,7 +165,7 @@
         }
       },
       "tier": "self-service",
-      "checked_on": "2026-11-21",
+      "checked_on": "2026-11-22",
       "status": "ok",
       "source_sha256": "8bb1d746d43d5d9000fc72c760f6a4667f895c987c77787f45ebb4a7214c76fe"
     },
@@ -208,9 +208,9 @@
           "reserved_term": "duration buckets as published; longer terms on request"
         }
       },
-      "checked_on": "2026-11-21",
+      "checked_on": "2026-11-22",
       "status": "ok",
-      "source_sha256": "df93bdc536454b945f84edc146c9f2db2d4367ee70d5c6e3fd2599c0c489f64d"
+      "source_sha256": "b0002d1d6ed32a29522849c846c35a14704967e810b78b7a56e119be7007c7ce"
     },
     "azure": {
       "name": "Microsoft Azure",
@@ -235,7 +235,7 @@
           "reserved_term": "1, 3 and 5 year reservations as published"
         }
       },
-      "checked_on": "2026-11-21",
+      "checked_on": "2026-11-22",
       "status": "ok",
       "source_sha256": "8150bb8f550f97b4a0c5f7965ff28b509aa5d218005ce518f03f5e3d9d2c9471"
     }
