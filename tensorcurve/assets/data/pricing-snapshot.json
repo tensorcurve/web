@@ -2,7 +2,7 @@
   "schema_version": 2,
   "provider": "Verda",
   "source_url": "https://verda.com/pricing",
-  "checked_on": "2026-11-24",
+  "checked_on": "2026-11-25",
   "collection_method": "Automated daily extraction of the public HTML table and schema.org offers",
   "currency": "USD",
   "unit": "per GPU-hour",
@@ -82,10 +82,10 @@
     "Refreshed automatically once a day from the public source page.",
     "providers: comparison on-demand prices from other suppliers; they publish no term-discount schedule, so no term curve is derived for them."
   ],
-  "collected_at": "2026-11-24T15:57:35+00:00",
-  "source_sha256": "3520b1271cbcd5c50d31bd1244a23dbd45e4abeacebd3cb9cbefab0397906a2b",
+  "collected_at": "2026-11-25T15:43:58+00:00",
+  "source_sha256": "9bcbeeb2ea6a20494a390b94e645089c18a3692c32e7f991fa29d3911094583a",
   "review_status": "automated extraction; validated against sanity bounds",
-  "previous_checked_on": "2026-11-23",
+  "previous_checked_on": "2026-11-24",
   "providers": {
     "hyperstack": {
       "name": "Hyperstack",
@@ -126,9 +126,9 @@
         }
       },
       "tier": "self-service",
-      "checked_on": "2026-11-24",
+      "checked_on": "2026-11-25",
       "status": "ok",
-      "source_sha256": "ae826b50d2a5eb3095ac48c2631269b728a6b9c365b4f24126cbf37d88a9b1f2"
+      "source_sha256": "14c3b77abb745a610ba85912bd0e6d0524c0c573e1b950662520d4c1a28b718d"
     },
     "lambda": {
       "name": "Lambda",
@@ -165,7 +165,7 @@
         }
       },
       "tier": "self-service",
-      "checked_on": "2026-11-24",
+      "checked_on": "2026-11-25",
       "status": "ok",
       "source_sha256": "8bb1d746d43d5d9000fc72c760f6a4667f895c987c77787f45ebb4a7214c76fe"
     },
@@ -208,9 +208,9 @@
           "reserved_term": "duration buckets as published; longer terms on request"
         }
       },
-      "checked_on": "2026-11-24",
+      "checked_on": "2026-11-25",
       "status": "ok",
-      "source_sha256": "1d2dc6f1d7286d7daf7ba70ac371b707b9150eb31136079519c4bfa8b641936f"
+      "source_sha256": "14807cd8e70543c2cc6c598287e630611d5b5c6166770f2fc7772b7db913c013"
     },
     "azure": {
       "name": "Microsoft Azure",
@@ -235,7 +235,7 @@
           "reserved_term": "1, 3 and 5 year reservations as published"
         }
       },
-      "checked_on": "2026-11-24",
+      "checked_on": "2026-11-25",
       "status": "ok",
       "source_sha256": "8150bb8f550f97b4a0c5f7965ff28b509aa5d218005ce518f03f5e3d9d2c9471"
     }
